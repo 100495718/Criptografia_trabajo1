@@ -3,7 +3,7 @@ import Pacientes
 def menu():
     while True:
         print("__________CLÍNICA___________")
-        print("1- Añadir paciente")
+        print("1- Crear paciente")
         print("2- Modificar paciente")
         print("3- Mostrar todos los pacientes")
         print("4- Salir")
