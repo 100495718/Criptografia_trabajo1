@@ -13,7 +13,9 @@ class Paciente:
                  movil: int,
                  cuenta: str,
                  diagnostico: str):
+        self.usuario = (nombre+apellido1+apellido2).lower()
         self.nombre = nombre
+        self.contrasena = ""
         self.apellido1 = apellido1
         self.apellido2 = apellido2
         self.edad = edad
@@ -28,6 +30,8 @@ class Paciente:
     #Transformar los datos del paciente a diccionario para usarlo al manejar json
     def transf_a_dic(self):
         return{
+            "usuario": self.usuario,
+            "contraseña": self.contrasena,
             "nombre": self.nombre,
             "apellido1": self.apellido1,
             "apellido2": self.apellido2,
