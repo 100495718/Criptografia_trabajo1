@@ -90,5 +90,7 @@ def mostrar():
         print(f"{i}. Nombre: {paciente['nombre']}, \n"
               f"   Apellido1: {paciente['apellido1']}, \n"
               f"   Apellido2: {paciente['apellido2']}, \n"
+              f"   Contraseña: {paciente['contraseña']}, \n"
+              f"   Usuario: {paciente['usuario']}, \n"
               )
     return

@@ -1,3 +1,32 @@
 [
-
+  {
+    "usuario": "alaa",
+    "contrase\u00f1a": "",
+    "nombre": "al",
+    "apellido1": "a",
+    "apellido2": "a",
+    "edad": "a",
+    "sexo": "a",
+    "ciudad": "a",
+    "calle": "a",
+    "numero": "a",
+    "movil": "a",
+    "cuenta": "a",
+    "diagnostico": "a"
+  },
+  {
+    "usuario": "aaa",
+    "contrase\u00f1a": "",
+    "nombre": "a",
+    "apellido1": "a",
+    "apellido2": "a",
+    "edad": "a",
+    "sexo": "a",
+    "ciudad": "a",
+    "calle": "a",
+    "numero": "a",
+    "movil": "a",
+    "cuenta": "a",
+    "diagnostico": "a"
+  }
 ]
