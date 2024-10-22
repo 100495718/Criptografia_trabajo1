@@ -21,8 +21,6 @@ def menu():
                 print("Inicio sesión paciente")
                 menu_paciente()
             case "4":
-                print("Registro paciente")
-            case "5":
                 print("Saliendo...")
                 break
             case _:
@@ -32,9 +30,10 @@ def menu_medico():
     while True:
         print("__________AREA DE MÉDICO___________")
         print("1- Crear paciente")
-        print("2- Modificar paciente")
+        print("2- Modificar datos de un paciente")
         print("3- Mostrar todos los pacientes")
-        print("4- Salir")
+        print("4- Buscar paciente")
+        print("5- Salir")
 
         opcion = input("Selecciona una opción")
 
