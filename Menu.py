@@ -51,7 +51,7 @@ def menu_medico():
             case "3":
                 Pacientes.mostrar()
             case "4":
-                print("Buscar paciente")
+                Pacientes.buscar()
             case "5":
                 print("Volviendo al menú principal... \n")
                 break

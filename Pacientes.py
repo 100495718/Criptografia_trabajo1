@@ -5,6 +5,7 @@ class Paciente:
                  nombre: str,
                  apellido1: str,
                  apellido2: str,
+                 contrasena: str,
                  edad: int,
                  sexo: str,
                  ciudad: str,
@@ -15,7 +16,7 @@ class Paciente:
                  diagnostico: str):
         self.usuario = (nombre+apellido1+apellido2).lower()
         self.nombre = nombre
-        self.contrasena = ""
+        self.contrasena = contrasena
         self.apellido1 = apellido1
         self.apellido2 = apellido2
         self.edad = edad
@@ -31,7 +32,7 @@ class Paciente:
     def transf_a_dic(self):
         return{
             "usuario": self.usuario,
-            "contraseña": self.contrasena,
+            "contrasena": self.contrasena,
             "nombre": self.nombre,
             "apellido1": self.apellido1,
             "apellido2": self.apellido2,
@@ -58,8 +59,9 @@ def agregar():
     movil = input("Número de teléfono del paciente: ")
     cuenta = input("Número de cuenta bancaria del paciente: ")
     diagnostico = input("Diagnóstico del paciente: ")
+    contrasena = input("Crea una contraseña para el paciente: ")
 
-    nuevo_paciente = Paciente(nombre, apellido1, apellido2, edad, sexo, ciudad,
+    nuevo_paciente = Paciente(nombre, apellido1, apellido2, contrasena, edad, sexo, ciudad,
                               calle, numero, movil, cuenta, diagnostico)
     data = nuevo_paciente.transf_a_dic()
     json = Json.Json("Pacientes.json")
@@ -74,6 +76,22 @@ def modificar():
 #Buscar un paciente para obtener más información
 def buscar():
     print("Buscar paciente")
+    clave = input("Introduce el nombre de la clave del diccionario:")
+    valor = input("Escribe el valor: \n")
+    json = Json.Json("Pacientes.json")
+    paciente = json.find_item(valor, clave)
+    print(f"Usuario: {paciente['usuario']}, \n"
+          f"Nombre: {paciente['nombre']}, \n"
+          f"Apellido1: {paciente['apellido1']}, \n"
+          f"Apellido2: {paciente['apellido2']}, \n"
+          f"Sexo: {paciente['sexo']}, \n"
+          f"Edad: {paciente['edad']}, \n"
+          f"Móvil: {paciente['movil']}, \n"
+          f"Calle: {paciente['calle']}, \n"
+          f"Numero: {paciente['numero']}, \n"
+          f"Ciudad: {paciente['ciudad']}, \n"
+          f"Diagnostico: {paciente['diagnostico']}, \n"
+          )
     return
 
 #Mostrar lista de todos los pacientes, (los espacios y los saltos de linea del print son estéticos)
@@ -90,7 +108,6 @@ def mostrar():
         print(f"{i}. Nombre: {paciente['nombre']}, \n"
               f"   Apellido1: {paciente['apellido1']}, \n"
               f"   Apellido2: {paciente['apellido2']}, \n"
-              f"   Contraseña: {paciente['contraseña']}, \n"
-              f"   Usuario: {paciente['usuario']}, \n"
+              f"   Movil: {paciente['movil']}, \n"
               )
     return

@@ -25,7 +25,7 @@ class Json():
 
     #Buscar elemento por valor y clave en el json
     def find_item(self, value, key):
-        self.load(self.filename)
+        self.load()
         for item in self.data:
             if value == item[key]:
                 return item
