@@ -6,8 +6,7 @@ def menu():
         print("1- Iniciar sesión como médico")
         print("2- Registrarse como médico")
         print("3- Iniciar sesión como paciente")
-        print("4- Registrarse como paciente")
-        print("5- Salir")
+        print("4- Salir")
 
         opcion = input("Selecciona una opción")
 
