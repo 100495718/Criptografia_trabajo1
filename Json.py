@@ -33,6 +33,6 @@ class Json():
 
     #Añadir un elemento al json
     def add_item(self, elem_to_add):
-        self.load(self.filename)
+        self.load()
         self.data.append(elem_to_add)
         self.save()

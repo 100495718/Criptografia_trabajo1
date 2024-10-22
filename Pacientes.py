@@ -44,7 +44,7 @@ class Paciente:
         }
 #Crear un paciente
 def agregar():
-    print("Agregar paciente")
+    #print("Agregar paciente")
     nombre = input("Nombre del paciente: ")
     apellido1 = input("Primer apellido del paciente: ")
     apellido2 = input("Segundo apellido del paciente: ")
@@ -68,9 +68,9 @@ def modificar():
     print("Modificar paciente")
     return
 
-#Mostrar lista de todos los pacientes, (los espacios del print son estéticos)
+#Mostrar lista de todos los pacientes, (los espacios y los saltos de linea del print son estéticos)
 def mostrar():
-    print("Mostrar pacientes")
+    #print("Mostrar pacientes")
     json = Json.Json("Pacientes.json")
     json.load()
     if not json.data:
