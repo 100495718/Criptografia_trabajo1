@@ -92,7 +92,7 @@ def buscar():
           f"Ciudad: {paciente['ciudad']}, \n"
           f"Diagnostico: {paciente['diagnostico']}, \n"
           )
-    return
+    return None
 
 #Mostrar lista de todos los pacientes, (los espacios y los saltos de linea del print son estéticos)
 def mostrar():
