@@ -56,9 +56,8 @@ def agregar():
     movil = input("Número de teléfono del paciente: ")
     cuenta = input("Número de cuenta bancaria del paciente: ")
     diagnostico = input("Diagnóstico del paciente: ")
-    contrasena = input("Crea una contraseña para el paciente: ")
 
-    nuevo_paciente = Paciente(nombre, apellido1, apellido2, contrasena, edad, sexo, ciudad,
+    nuevo_paciente = Paciente(nombre, apellido1, apellido2, edad, sexo, ciudad,
                               calle, numero, movil, cuenta, diagnostico)
     data = nuevo_paciente.transf_a_dic()
     json = Json.Json("pacientes_expediente.json")
@@ -67,12 +66,25 @@ def agregar():
 
 #Modificar datos de un paciente
 def modificar():
-    print("Modificar paciente")
-    return
+    #print("Modificar paciente")
+    usuario = input("Introduce el nombre de usuario que quieres modificar:")
+    clave = input("Introduce el nombre de la clave del diccionario:")
+    valor = input("Escribe el nuevo valor: \n")
+    json = Json.Json("pacientes_expediente.json")
+    json.load()
+    for item in json.data:
+        if item["usuario"] == usuario:
+            if clave in item:
+                item[clave] = valor
+                json.save()
+                return f"Se ha modificado exitosamente."
+            else:
+                return f"La clave '{clave}' no existe."
+    return f"No se encontró el usuario '{usuario}'."
 
 #Buscar un paciente para obtener más información
 def buscar():
-    print("Buscar paciente")
+    #print("Buscar paciente")
     clave = input("Introduce el nombre de la clave del diccionario:")
     valor = input("Escribe el valor: \n")
     json = Json.Json("pacientes_expediente.json")

@@ -19,7 +19,7 @@ def menu():
         match opcion:
             case "1":
                 print("Inicio sesión medico")
-                Medico.iniciar_sesion_m()
+                #Medico.iniciar_sesion_m()
                 menu_medico()
             case "2":
                 print("Registro médico")
