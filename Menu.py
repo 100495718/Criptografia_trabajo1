@@ -26,8 +26,8 @@ def menu():
                 Medico.registrar_m()
             case "3":
                 print("Inicio sesión paciente")
-                Paciente.iniciar_sesion_p()
-                menu_paciente()
+                usuario = Paciente.iniciar_sesion_p()
+                menu_paciente(usuario)
             case "4":
                 print("Registro paciente")
                 Paciente.registrar_p()
@@ -66,7 +66,7 @@ def menu_medico():
             case _:
                 print("Opción no válida")
 
-def menu_paciente():
+def menu_paciente(usuario):
     #borrar_pantalla()
     while True:
         print("_______________CLÍNICA_______________")
