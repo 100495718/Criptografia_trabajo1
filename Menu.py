@@ -1,5 +1,6 @@
-import Pacientes
-import os
+import Paciente_expediente
+import Medico
+import Paciente
 
 def menu():
     #borrar_pantalla()
@@ -9,7 +10,8 @@ def menu():
         print("1- Iniciar sesión como médico")
         print("2- Registrarse como médico")
         print("3- Iniciar sesión como paciente")
-        print("4- Salir\n")
+        print("4- Registrarse como paciente")
+        print("5- Salir\n")
 
         opcion = input("Selecciona una opción")
         print()
@@ -17,13 +19,19 @@ def menu():
         match opcion:
             case "1":
                 print("Inicio sesión medico")
+                Medico.iniciar_sesion_m()
                 menu_medico()
             case "2":
                 print("Registro médico")
+                Medico.registrar_m()
             case "3":
                 print("Inicio sesión paciente")
+                Paciente.iniciar_sesion_p()
                 menu_paciente()
             case "4":
+                print("Registro paciente")
+                Paciente.registrar_p()
+            case "5":
                 print("Saliendo...")
                 break
             case _:
@@ -45,13 +53,13 @@ def menu_medico():
 
         match opcion:
             case "1":
-                Pacientes.agregar()
+                Paciente_expediente.agregar()
             case "2":
-                Pacientes.modificar()
+                Paciente_expediente.modificar()
             case "3":
-                Pacientes.mostrar()
+                Paciente_expediente.mostrar()
             case "4":
-                Pacientes.buscar()
+                Paciente_expediente.buscar()
             case "5":
                 print("Volviendo al menú principal... \n")
                 break
@@ -80,6 +88,3 @@ def menu_paciente():
                 break
             case _:
                 print("Opción no válida")
-
-def borrar_pantalla():
-    os.system('cls')

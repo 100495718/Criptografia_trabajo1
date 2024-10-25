@@ -5,7 +5,6 @@ class Paciente:
                  nombre: str,
                  apellido1: str,
                  apellido2: str,
-                 contrasena: str,
                  edad: int,
                  sexo: str,
                  ciudad: str,
@@ -16,7 +15,6 @@ class Paciente:
                  diagnostico: str):
         self.usuario = (nombre+apellido1+apellido2).lower()
         self.nombre = nombre
-        self.contrasena = contrasena
         self.apellido1 = apellido1
         self.apellido2 = apellido2
         self.edad = edad
@@ -32,7 +30,6 @@ class Paciente:
     def transf_a_dic(self):
         return{
             "usuario": self.usuario,
-            "contrasena": self.contrasena,
             "nombre": self.nombre,
             "apellido1": self.apellido1,
             "apellido2": self.apellido2,
@@ -64,7 +61,7 @@ def agregar():
     nuevo_paciente = Paciente(nombre, apellido1, apellido2, contrasena, edad, sexo, ciudad,
                               calle, numero, movil, cuenta, diagnostico)
     data = nuevo_paciente.transf_a_dic()
-    json = Json.Json("Pacientes.json")
+    json = Json.Json("pacientes_expediente.json")
     json.add_item(data)
     return
 
@@ -78,7 +75,7 @@ def buscar():
     print("Buscar paciente")
     clave = input("Introduce el nombre de la clave del diccionario:")
     valor = input("Escribe el valor: \n")
-    json = Json.Json("Pacientes.json")
+    json = Json.Json("pacientes_expediente.json")
     paciente = json.find_item(valor, clave)
     print(f"Usuario: {paciente['usuario']}, \n"
           f"Nombre: {paciente['nombre']}, \n"
@@ -97,7 +94,7 @@ def buscar():
 #Mostrar lista de todos los pacientes, (los espacios y los saltos de linea del print son estéticos)
 def mostrar():
     #print("Mostrar pacientes")
-    json = Json.Json("Pacientes.json")
+    json = Json.Json("pacientes_expediente.json")
     json.load()
     if not json.data:
         print("No hay pacientes registrados.")
