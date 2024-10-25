@@ -1,6 +1,8 @@
 import json
 import os
 
+#Clase que contiene las funciones relacionadas con archivos json que  van a utilizarse en otras funciones fuera
+#de esta clase
 class Json():
     def __init__(self, filename):
         self.data = []

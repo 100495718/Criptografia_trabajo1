@@ -1,7 +1,7 @@
 import Paciente_expediente
 import Medico
 import Paciente
-
+#Clase para las "interfaces gráficas"
 def menu():
     #borrar_pantalla()
     while True:

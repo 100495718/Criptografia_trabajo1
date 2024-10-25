@@ -1,5 +1,5 @@
 import Json
-
+#Clase para el inicio de sesión y registro de los médicos
 class Medico():
     def __init__(self, usuario: str, contraseña: str):
         self.usuario = usuario

@@ -1,5 +1,5 @@
 import Json
-
+#Clase para lo relacionado con los expedientes médicos
 class Paciente:
     def __init__(self,
                  nombre: str,
@@ -91,7 +91,7 @@ def buscar():
           )
     return
 
-#Mostrar lista de todos los pacientes, (los espacios y los saltos de linea del print son estéticos)
+#Mostrar lista de todos los pacientes
 def mostrar():
     #print("Mostrar pacientes")
     json = Json.Json("pacientes_expediente.json")
