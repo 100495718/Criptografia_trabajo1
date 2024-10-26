@@ -102,11 +102,3 @@ def iniciar_sesion_p():
             return None
     return
 
-def contrasena_segura_p():
-    return
-
-def comprobacion_usuario_existente():
-    return
-
-def crear_perfil_p(usuario, contrasena):
-    return
