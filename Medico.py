@@ -3,6 +3,7 @@ import getpass
 import time
 import Seguridad
 
+
 #Clase para el inicio de sesión y registro de los médicos
 class Medico():
     def __init__(self, usuario: str, contrasena: str):
@@ -69,4 +70,13 @@ def iniciar_sesion_m():
             print("Las credenciales no son correctas")
             time.sleep(1)
             return None
+    return
+
+def comprobacion_usuario_existente():
+    return
+
+def contrasena_m():
+    return
+
+def crear_perfil_m():
     return
