@@ -1,4 +1,5 @@
 import re #Biblioteca para detectar expresiones regulares
+
 #Funciones relativas a la seguridad del programa
 
 #Algoritmo para comprobar que una contraseña es robusta
