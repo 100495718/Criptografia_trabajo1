@@ -1,6 +1,7 @@
 import getpass
 import Json
 import time
+import Seguridad
 
 #Clase para llevar a cabo el inicio de sesión y registro de pacientes y mantener los datos de las cuentas separados
 #del expediente médico
@@ -27,14 +28,18 @@ def registrar_p():
             for item in json_expedientes.data:
                 if item["usuario"] == usuario:
                     contrasena = getpass.getpass("Introduce una contraseña: ")
-                    contrasena2 = getpass.getpass("Repite contraseña: ")
-                    if contrasena == contrasena2:
-                        data = Paciente_usuario(usuario, contrasena)
-                        json_cuentas.add_item(data.transf_a_dic())
-                        print("Se ha registrado exitosamente")
-                        time.sleep(1)
+                    if Seguridad.contrasena_robusta(contrasena):
+                        contrasena2 = getpass.getpass("Repite contraseña: ")
+                        if contrasena == contrasena2:
+                            data = Paciente_usuario(usuario, contrasena)
+                            json_cuentas.add_item(data.transf_a_dic())
+                            print("Se ha registrado exitosamente")
+                            time.sleep(1)
+                        else:
+                            print("Las contraseñas no coinciden")
+                            time.sleep(1)
                     else:
-                        print("Las contraseñas no coinciden")
+                        print("La contraseña no es segura")
                         time.sleep(1)
                 else:
                     print("No se puede crear una cuenta para este usuario")
@@ -52,14 +57,18 @@ def registrar_p():
                     for item in json_expedientes.data:
                         if item["usuario"] == usuario:
                             contrasena = getpass.getpass("Introduce una contraseña: ")
-                            contrasena2 = getpass.getpass("Repite contraseña: ")
-                            if contrasena == contrasena2:
-                                data = Paciente_usuario(usuario, contrasena)
-                                json_cuentas.add_item(data.transf_a_dic())
-                                print("Se ha registrado exitosamente")
-                                time.sleep(1)
+                            if Seguridad.contrasena_robusta(contrasena):
+                                contrasena2 = getpass.getpass("Repite contraseña: ")
+                                if contrasena == contrasena2:
+                                    data = Paciente_usuario(usuario, contrasena)
+                                    json_cuentas.add_item(data.transf_a_dic())
+                                    print("Se ha registrado exitosamente")
+                                    time.sleep(1)
+                                else:
+                                    print("Las contraseñas no coinciden")
+                                    time.sleep(1)
                             else:
-                                print("Las contraseñas no coinciden")
+                                print("La contraseña no es segura")
                                 time.sleep(1)
                         else:
                             print("No se puede crear una cuenta para este usuario")

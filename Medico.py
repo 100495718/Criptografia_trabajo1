@@ -1,6 +1,7 @@
 import Json
 import getpass
 import time
+import Seguridad
 
 #Clase para el inicio de sesión y registro de los médicos
 class Medico():
@@ -20,14 +21,18 @@ def registrar_m():
     json.load()
     if json.data == []:
         contrasena = getpass.getpass("Introduce una contraseña: ")
-        contrasena2 = getpass.getpass("Repite contraseña: ")
-        if contrasena == contrasena2:
-            data = Medico(usuario, contrasena)
-            json.add_item(data.transf_a_dic())
-            print("Se ha registrado exitosamente")
-            time.sleep(1)
+        if Seguridad.contrasena_robusta(contrasena):
+            contrasena2 = getpass.getpass("Repite contraseña: ")
+            if contrasena == contrasena2:
+                data = Medico(usuario, contrasena)
+                json.add_item(data.transf_a_dic())
+                print("Se ha registrado exitosamente")
+                time.sleep(1)
+            else:
+                print("Las contraseñas no coinciden")
+                time.sleep(1)
         else:
-            print("Las contraseñas no coinciden")
+            print("La contraseña no es segura")
             time.sleep(1)
     else:
         for item in json.data:
@@ -37,14 +42,18 @@ def registrar_m():
                 return
             else:
                 contrasena = getpass.getpass("Introduce una contraseña: ")
-                contrasena2 = getpass.getpass("Repite contraseña: ")
-                if contrasena == contrasena2:
-                    data = Medico(usuario, contrasena)
-                    json.add_item(data.transf_a_dic())
-                    print("Se ha registrado exitosamente")
-                    time.sleep(1)
+                if Seguridad.contrasena_robusta(contrasena):
+                    contrasena2 = getpass.getpass("Repite contraseña: ")
+                    if contrasena == contrasena2:
+                        data = Medico(usuario, contrasena)
+                        json.add_item(data.transf_a_dic())
+                        print("Se ha registrado exitosamente")
+                        time.sleep(1)
+                    else:
+                        print("Las contraseñas no coinciden")
+                        time.sleep(1)
                 else:
-                    print("Las contraseñas no coinciden")
+                    print("La contraseña no es segura")
                     time.sleep(1)
     return
 
