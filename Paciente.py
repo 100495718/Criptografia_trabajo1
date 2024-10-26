@@ -97,5 +97,5 @@ def contrasena_segura_p():
 def comprobacion_usuario_existente():
     return
 
-def crear_perfil_p():
+def crear_perfil_p(usuario, contrasena):
     return
