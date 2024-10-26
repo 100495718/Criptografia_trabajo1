@@ -18,41 +18,55 @@ class Paciente_usuario():
 
 def registrar_p():
     usuario = input("Introduce un nombre de usuario:")
-    json = Json.Json("storage/pacientes_expediente.json")
-    json.load()
-    if json.data == []:
-        contrasena = getpass.getpass("Introduce una contraseña: ")
-        contrasena2 = getpass.getpass("Repite contraseña: ")
-        if contrasena == contrasena2:
-            nuevo_paciente = Paciente_usuario(usuario, contrasena)
-            json2 = Json.Json("storage/pacientes.json")
-            json2.load()
-            json2.add_item(nuevo_paciente.transf_a_dic())
-            print("Se ha creado su cuenta exitosamente")
-            time.sleep(1)
+    json_cuentas = Json.Json("storage/pacientes.json")
+    json_cuentas.load()
+    json_expedientes = Json.Json("storage/pacientes_expediente.json")
+    json_expedientes.load()
+    if json_cuentas.data == []:
+        if json_expedientes.data != []:
+            for item in json_expedientes.data:
+                if item["usuario"] == usuario:
+                    contrasena = getpass.getpass("Introduce una contraseña: ")
+                    contrasena2 = getpass.getpass("Repite contraseña: ")
+                    if contrasena == contrasena2:
+                        data = Paciente_usuario(usuario, contrasena)
+                        json_cuentas.add_item(data.transf_a_dic())
+                        print("Se ha registrado exitosamente")
+                        time.sleep(1)
+                    else:
+                        print("Las contraseñas no coinciden")
+                        time.sleep(1)
+                else:
+                    print("No se puede crear una cuenta para este usuario")
+                    time.sleep(1)
         else:
-            print("Las contraseñas no coinciden")
+            print("No se puede crear una cuenta para este usuario")
             time.sleep(1)
     else:
-        for item in json.data:
+        for item in json_cuentas.data:
             if item["usuario"] == usuario:
-                # getpass.getpass() sirve para realizar la misma función que un input sin mostrar lo que se está escribiendo
-                # No funciona en algunas consolas de IDEs pero si en la terminal de Windows
-                contrasena = getpass.getpass("Introduce una contraseña: ")
-                contrasena2 = getpass.getpass("Repite contraseña: ")
-                if contrasena == contrasena2:
-                    nuevo_paciente = Paciente_usuario(usuario, contrasena)
-                    json2 = Json.Json("storage/pacientes.json")
-                    json2.load()
-                    json2.add_item(nuevo_paciente.transf_a_dic())
-                    print("Se ha creado su cuenta exitosamente")
-                    time.sleep(1)
-                else:
-                    print("Las contraseñas no coinciden")
-                    time.sleep(1)
-            else:
-                print("El usuario no es correcto")
+                print("Ya existe una cuenta con ese usuario")
                 time.sleep(1)
+            else:
+                if json_expedientes.data != []:
+                    for item in json_expedientes.data:
+                        if item["usuario"] == usuario:
+                            contrasena = getpass.getpass("Introduce una contraseña: ")
+                            contrasena2 = getpass.getpass("Repite contraseña: ")
+                            if contrasena == contrasena2:
+                                data = Paciente_usuario(usuario, contrasena)
+                                json_cuentas.add_item(data.transf_a_dic())
+                                print("Se ha registrado exitosamente")
+                                time.sleep(1)
+                            else:
+                                print("Las contraseñas no coinciden")
+                                time.sleep(1)
+                        else:
+                            print("No se puede crear una cuenta para este usuario")
+                            time.sleep(1)
+                else:
+                    print("No se puede crear una cuenta para este usuario")
+                    time.sleep(1)
     return
 
 def iniciar_sesion_p():

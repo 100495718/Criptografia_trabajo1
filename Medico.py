@@ -33,6 +33,8 @@ def registrar_m():
         for item in json.data:
             if item["usuario"]== usuario:
                 print("Este usuario ya existe")
+                time.sleep(1)
+                return
             else:
                 contrasena = getpass.getpass("Introduce una contraseña: ")
                 contrasena2 = getpass.getpass("Repite contraseña: ")

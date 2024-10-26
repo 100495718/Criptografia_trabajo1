@@ -102,6 +102,7 @@ def buscar():
           f"Ciudad: {paciente['ciudad']}, \n"
           f"Diagnostico: {paciente['diagnostico']}, \n"
           )
+    input()
     return
 
 #Mostrar lista de todos los pacientes
@@ -120,4 +121,5 @@ def mostrar():
               f"   Apellido2: {paciente['apellido2']}, \n"
               f"   Movil: {paciente['movil']}, \n"
               )
+    input()
     return
