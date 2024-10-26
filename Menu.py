@@ -4,7 +4,8 @@ import Paciente
 import os
 import time
 
-#Clase para las "interfaces gráficas"
+#Funciones para la "interfaz gráfica"
+
 def menu():
     while True:
         borrar_pantalla()
@@ -21,20 +22,20 @@ def menu():
 
         match opcion:
             case "1":
-                print("Inicio sesión medico")
+                #Inicio sesión medico
                 usuario = Medico.iniciar_sesion_m()
                 if usuario != None:
                     menu_medico()
             case "2":
-                print("Registro médico")
+                #Registro médico
                 Medico.registrar_m()
             case "3":
-                print("Inicio sesión paciente")
+                #Inicio sesión paciente
                 usuario = Paciente.iniciar_sesion_p()
                 if usuario != None:
                     menu_paciente(usuario)
             case "4":
-                print("Registro paciente")
+                #"Registro paciente"
                 Paciente.registrar_p()
             case "5":
                 print("Saliendo...")
@@ -60,12 +61,16 @@ def menu_medico():
 
         match opcion:
             case "1":
+                #agregar nuevo paciente
                 Paciente_expediente.agregar()
             case "2":
+                #modificar dato de paciente
                 Paciente_expediente.modificar()
             case "3":
+                #mostrar lista de pacientes
                 Paciente_expediente.mostrar()
             case "4":
+                #buscar paciente para más información
                 Paciente_expediente.buscar()
             case "5":
                 print("Volviendo al menú principal... \n")
@@ -89,8 +94,10 @@ def menu_paciente(usuario):
 
         match opcion:
             case "1":
+                #ver los datos del paciente actual
                 print("Ver mis datos")
             case "2":
+                #modificar datos del paciente actual
                 print("Modificar mis datos")
             case "3":
                 print("Volviendo al menú principal... \n")
