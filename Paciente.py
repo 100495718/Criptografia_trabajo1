@@ -34,23 +34,29 @@ def registrar_p():
                             json_cuentas.add_item(data.transf_a_dic())
                             print("Se ha registrado exitosamente")
                             time.sleep(1)
+                            return
                         else:
                             print("Las contraseñas no coinciden")
                             time.sleep(1)
+                            return
                     else:
                         print("La contraseña no es segura")
                         time.sleep(1)
+                        return
                 else:
                     print("No se puede crear una cuenta para este usuario")
                     time.sleep(1)
+                    return
         else:
             print("No se puede crear una cuenta para este usuario")
             time.sleep(1)
+            return
     else:
         for item in json_cuentas.data:
             if item["usuario"] == usuario:
                 print("Ya existe una cuenta con ese usuario")
                 time.sleep(1)
+                return
             else:
                 if json_expedientes.data != []:
                     for item in json_expedientes.data:
@@ -63,18 +69,23 @@ def registrar_p():
                                     json_cuentas.add_item(data.transf_a_dic())
                                     print("Se ha registrado exitosamente")
                                     time.sleep(1)
+                                    return
                                 else:
                                     print("Las contraseñas no coinciden")
                                     time.sleep(1)
+                                    return
                             else:
                                 print("La contraseña no es segura")
                                 time.sleep(1)
+                                return
                         else:
                             print("No se puede crear una cuenta para este usuario")
                             time.sleep(1)
+                            return
                 else:
                     print("No se puede crear una cuenta para este usuario")
                     time.sleep(1)
+                    return
     return
 
 def iniciar_sesion_p():
