@@ -1,11 +1,13 @@
 import Paciente_expediente
 import Medico
 import Paciente
+import os
+import time
 
 #Clase para las "interfaces gráficas"
 def menu():
-    #borrar_pantalla()
     while True:
+        borrar_pantalla()
         print("______________CLÍNICA______________")
         print("__________MENÚ PRINCIPAL___________\n")
         print("1- Iniciar sesión como médico")
@@ -20,27 +22,31 @@ def menu():
         match opcion:
             case "1":
                 print("Inicio sesión medico")
-                #Medico.iniciar_sesion_m()
-                menu_medico()
+                usuario = Medico.iniciar_sesion_m()
+                if usuario != None:
+                    menu_medico()
             case "2":
                 print("Registro médico")
                 Medico.registrar_m()
             case "3":
                 print("Inicio sesión paciente")
                 usuario = Paciente.iniciar_sesion_p()
-                menu_paciente(usuario)
+                if usuario != None:
+                    menu_paciente(usuario)
             case "4":
                 print("Registro paciente")
                 Paciente.registrar_p()
             case "5":
                 print("Saliendo...")
+                time.sleep(1)
                 break
             case _:
                 print("Opción no válida")
+                time.sleep(1)
 
 def menu_medico():
-    #borrar_pantalla()
     while True:
+        borrar_pantalla()
         print("______________CLÍNICA______________")
         print("__________AREA DE MÉDICO___________\n")
         print("1- Crear paciente")
@@ -63,13 +69,15 @@ def menu_medico():
                 Paciente_expediente.buscar()
             case "5":
                 print("Volviendo al menú principal... \n")
+                time.sleep(1)
                 break
             case _:
                 print("Opción no válida")
+                time.sleep(1)
 
 def menu_paciente(usuario):
-    #borrar_pantalla()
     while True:
+        borrar_pantalla()
         print("_______________CLÍNICA_______________")
         print("__________AREA DE PACIENTE___________\n")
         print("1- Ver mis datos")
@@ -86,6 +94,14 @@ def menu_paciente(usuario):
                 print("Modificar mis datos")
             case "3":
                 print("Volviendo al menú principal... \n")
+                time.sleep(1)
                 break
             case _:
                 print("Opción no válida")
+                time.sleep(1)
+
+#Esta función sirve para despejar la pantalla en la terminal para tener una "interfaz gráfica" más limpia
+#No funciona en algunas consolas de IDEs pero si en la terminal de Windows
+def borrar_pantalla():
+    os.system('cls')
+    return
