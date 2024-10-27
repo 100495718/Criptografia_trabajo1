@@ -21,7 +21,7 @@ def derivar_contrasena(contrasena:str):
     kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=480000)
     #Obtener hash
     hash = kdf.derive(contrasena.encode('utf-8'))
-    return salt, hash
+    return hash, salt
 
 def verificar_contrasena(contrasena, hash, salt):
     # Configuración del algoritmo PBKDF2
