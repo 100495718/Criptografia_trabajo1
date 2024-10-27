@@ -1,6 +1,5 @@
 import re #Biblioteca para detectar expresiones regulares
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 import os
 #Funciones relativas a la seguridad del programa
 
@@ -17,15 +16,15 @@ def contrasena_robusta(contrasena):
 
 def derivar_contrasena(contrasena:str):
     salt = os.urandom(16)
-    #Configuración del algoritmo PBKDF2
-    kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=480000)
+    #Configuración del algoritmo
+    kdf = Scrypt(salt=salt,length=32,n=2**14,r=8,p=1)
     #Obtener hash
     hash = kdf.derive(contrasena.encode('utf-8'))
     return hash, salt
 
 def verificar_contrasena(contrasena, hash, salt):
-    # Configuración del algoritmo PBKDF2
-    kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=480000)
+    # Configuración del algoritmo
+    kdf = Scrypt(salt=salt,length=32,n=2**14,r=8,p=1)
     try:
         kdf.verify(contrasena.encode('utf-8'), hash)
         return True
