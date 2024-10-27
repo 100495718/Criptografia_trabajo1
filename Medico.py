@@ -5,15 +5,15 @@ import Seguridad
 
 #Clase para el inicio de sesión y registro de los médicos
 class Medico():
-    def __init__(self, usuario: str, contrasena: str, salt):
+    def __init__(self, usuario: str, hash, salt):
         self.usuario = usuario
-        self.contrasena = contrasena
-        self.salt = salt
+        self.hash = hash.hex()
+        self.salt = salt.hex()
 
     def transf_a_dic(self):
         return{
             "usuario": self.usuario,
-            "contrasena": self.contrasena,
+            "hash": self.hash,
             "salt": self.salt
         }
 
@@ -74,7 +74,9 @@ def iniciar_sesion_m():
     json.load()
     for item in json.data:
         if item["usuario"] == usuario:
-            if Seguridad.verificar_contrasena(contrasena, item["salt"], item["hash"]):
+            salt = bytes.fromhex(item["salt"])
+            hash = bytes.fromhex(item["hash"])
+            if Seguridad.verificar_contrasena(contrasena, salt, hash):
                 return usuario
         else:
             print("Las credenciales no son correctas")

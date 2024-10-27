@@ -1,2 +1,7 @@
 [
+  {
+    "usuario": "alicia",
+    "hash": "b34d44cc9a205b792998755ddfa08808",
+    "salt": "5dc18855ae39dce0efe013569223633dcb4aaa2dde56731fefd10922f2040889"
+  }
 ]

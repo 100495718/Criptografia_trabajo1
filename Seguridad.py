@@ -16,7 +16,7 @@ def contrasena_robusta(contrasena):
     return False
 
 def derivar_contrasena(contrasena:str):
-    salt = os.random(16)
+    salt = os.urandom(16)
     #Configuración del algoritmo PBKDF2
     kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=480000)
     #Obtener hash
