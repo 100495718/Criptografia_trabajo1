@@ -1,5 +1,7 @@
 import re #Biblioteca para detectar expresiones regulares
-import cryptography
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import os
 #Funciones relativas a la seguridad del programa
 
 #Algoritmo para comprobar que una contraseña es robusta
@@ -12,3 +14,21 @@ def contrasena_robusta(contrasena):
                     if re.search(r"[#!@$%&/()=?¿¡_.,;:{}*^<>]", contrasena):
                         return True
     return False
+
+def derivar_contrasena(contrasena:str):
+    salt = os.random(16)
+    #Configuración del algoritmo PBKDF2
+    kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=480000)
+    #Obtener hash
+    hash = kdf.derive(contrasena.encode('utf-8'))
+    return salt, hash
+
+def verificar_contrasena(contrasena, hash, salt):
+    # Configuración del algoritmo PBKDF2
+    kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=480000)
+    try:
+        kdf.verify(contrasena.encode('utf-8'), hash)
+        return True
+    except Exception:
+        return False
+
