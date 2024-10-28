@@ -35,25 +35,20 @@ def registrar_p():
                             data = Paciente_usuario(usuario, hash, salt)
                             json_cuentas.add_item(data.transf_a_dic())
                             print("Se ha registrado exitosamente")
-                            input()
                             return
                         else:
                             print("Las contraseñas no coinciden")
-                            input()
                             return
                     else:
                         print("La contraseña no es segura")
-                        input()
                         return
             else:
                 print("No se puede crear una cuenta para este usuario")
-                input()
                 return
     else:
         for item in json_cuentas.data:
             if item["usuario"] == usuario:
                 print("Ya existe una cuenta con ese usuario")
-                input()
                 return
             else:
                 if json_expedientes.data != []:
@@ -67,19 +62,15 @@ def registrar_p():
                                     data = Paciente_usuario(usuario, hash, salt)
                                     json_cuentas.add_item(data.transf_a_dic())
                                     print("Se ha registrado exitosamente")
-                                    input()
                                     return
                                 else:
                                     print("Las contraseñas no coinciden")
-                                    input()
                                     return
                             else:
                                 print("La contraseña no es segura")
-                                input()
                                 return
                     else:
                         print("No se puede crear una cuenta para este usuario")
-                        input()
                         return
     return
 

@@ -1,17 +1,2 @@
 [
-  {
-    "usuario": "alicia",
-    "hash": "757c5b2b715aa5bd357f98aa181b433e",
-    "salt": "8149ee171160c6ec38b66ce9f4d514569e8dd880dbe412ce40972fdebafee5c2"
-  },
-  {
-    "usuario": "daniel",
-    "hash": "12fa7a6d69c4adf586cf5eebafc8dfb4",
-    "salt": "10fcda104f265bf7535909072cc6d7151d9b3dd2b5f59168d5f0da76e49719f7"
-  },
-  {
-    "usuario": "juan",
-    "hash": "576935f252b408beff9c369c47487319",
-    "salt": "8cad6f8e32322a387dedc16619b2eb164b668bcf237c0f4ee7ba78af664167ff"
-  }
 ]

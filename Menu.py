@@ -26,17 +26,25 @@ def menu():
                 usuario = Medico.iniciar_sesion_m()
                 if usuario != None:
                     menu_medico()
+                print("\nPulse enter, para volver al menú")
+                input()
             case "2":
                 #Registro médico
                 Medico.registrar_m()
+                print("\nPulse enter, para volver al menú")
+                input()
             case "3":
                 #Inicio sesión paciente
                 usuario = Paciente.iniciar_sesion_p()
                 if usuario != None:
                     menu_paciente(usuario)
+                print("\nPulse enter, para volver al menú")
+                input()
             case "4":
                 #"Registro paciente"
                 Paciente.registrar_p()
+                print("\nPulse enter, para volver al menú")
+                input()
             case "5":
                 print("Saliendo...")
                 time.sleep(1)
@@ -63,15 +71,22 @@ def menu_medico():
             case "1":
                 #agregar nuevo paciente
                 Paciente_expediente.agregar()
+                print("\nPulse enter, para volver al menú")
+                input()
             case "2":
                 #modificar dato de paciente
-                Paciente_expediente.modificar()
+                #Paciente_expediente.modificar()
+                print("Función en desarrollo")
+                time.sleep(1)
             case "3":
                 #mostrar lista de pacientes
                 Paciente_expediente.mostrar()
+                print("\nPulse enter, para volver al menú")
+                input()
             case "4":
-                #buscar paciente para más información
                 Paciente_expediente.buscar()
+                print("\nPulse enter, para volver al menú")
+                input()
             case "5":
                 print("Volviendo al menú principal... \n")
                 time.sleep(1)
@@ -95,13 +110,13 @@ def menu_paciente(usuario):
         match opcion:
             case "1":
                 #ver los datos del paciente actual
-                print("Ver mis datos")
-                print("Pulse enter para volver al menu")
+                Paciente_expediente.mostrar_datos_paciente(usuario)
+                print("\nPulse enter, para volver al menú")
                 input()
             case "2":
                 #modificar datos del paciente actual
-                print("Modificar mis datos")
-                print("Pulse enter para volver al menu")
+                print("Función en desarrollo")
+                print("\nPulse enter para volver al menu")
                 input()
             case "3":
                 print("Volviendo al menú principal... \n")
@@ -112,7 +127,6 @@ def menu_paciente(usuario):
                 time.sleep(1)
 
 #Esta función sirve para despejar la pantalla en la terminal para tener una "interfaz gráfica" más limpia
-#No funciona en algunas consolas de IDEs pero si en la terminal de Windows
 def borrar_pantalla():
     os.system('cls')
     return

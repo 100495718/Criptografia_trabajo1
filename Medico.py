@@ -30,21 +30,17 @@ def registrar_m():
                 data = Medico(usuario, hash, salt)
                 json.add_item(data.transf_a_dic())
                 print("Se ha registrado exitosamente")
-                time.sleep(1)
                 return
             else:
                 print("Las contraseñas no coinciden")
-                time.sleep(1)
                 return
         else:
             print("La contraseña no es segura")
-            time.sleep(1)
             return
     else:
         for item in json.data:
             if item["usuario"]== usuario:
                 print("Este usuario ya existe")
-                time.sleep(1)
                 return
             else:
                 contrasena = getpass.getpass("Introduce una contraseña: ")
@@ -55,15 +51,12 @@ def registrar_m():
                         data = Medico(usuario, hash, salt)
                         json.add_item(data.transf_a_dic())
                         print("Se ha registrado exitosamente")
-                        time.sleep(1)
                         return
                     else:
                         print("Las contraseñas no coinciden")
-                        time.sleep(1)
                         return
                 else:
                     print("La contraseña no es segura")
-                    time.sleep(1)
                     return
     return
 
@@ -82,6 +75,5 @@ def iniciar_sesion_m():
         return usuario
     else:
         print("Las credenciales no son correctas")
-        input()
         return None
     return
