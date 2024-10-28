@@ -38,3 +38,11 @@ class Json():
         self.load()
         self.data.append(elem_to_add)
         self.save()
+
+    #Borrar un elemento
+    def delete_item(self, value, key):
+        self.load()
+        for item in self.data:
+            if item[key] == value:
+                self.data.remove(item)
+        self.save()

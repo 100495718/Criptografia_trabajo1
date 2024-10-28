@@ -69,6 +69,10 @@ class Paciente:
             "nonce_diagnostico": self.nonce_diagnostico
         }
 
+def trans_a_obj(dic):
+    return Paciente(dic["nombre"], dic["apellido1"], dic["apellido2"],dic["edad"], dic["sexo"],
+                    dic["ciudad"], dic["calle"], dic["numero"], dic["movil"], dic["cuenta"], dic["diagnostico"])
+
 #Crear un paciente
 def agregar():
     #print("Agregar paciente")
@@ -123,21 +127,27 @@ def guardar_paciente(paciente):
 #Modificar datos de un paciente
 def modificar():
     #print("Modificar paciente")
-    usuario = input("Introduce el nombre de usuario que quieres modificar:")
-    clave = input("Introduce el nombre de la clave del diccionario:")
-    valor = input("Escribe el nuevo valor: \n")
     json = Json.Json("storage/pacientes_expediente.json")
     json.load()
-    for item in json.data:
-        if item["usuario"] == usuario:
-            if clave in item:
-                item[clave] = valor
-                json.save()
-                return f"Se ha modificado exitosamente."
-            else:
-                return f"La clave '{clave}' no existe."
-    return f"No se encontró el usuario '{usuario}'."
-
+    usuario = input("Introduce el nombre de usuario que quieres modificar:")
+    paciente_dic = json.find_item(usuario, "usuario")
+    if paciente_dic == None:
+        print("Este paciente no existe")
+        input()
+        return
+    clave = input("Introduce el nombre de la clave del diccionario:")
+    if clave not in ["diagnostico", "nombre", "apellido1", "apellido2", "edad", "sexo"]:
+        print("Ese dato no se puede modificar o no existe")
+        input()
+        return
+    valor = input("Escribe el nuevo valor: \n")
+    json.delete_item(usuario, "usuario")
+    paciente_dic[clave] = valor
+    paciente = trans_a_obj(paciente_dic)
+    guardar_paciente(paciente)
+    print("Se han modificado los datos correctamente")
+    input()
+    return
 
 #Buscar un paciente para obtener más información
 def buscar():
