@@ -2,6 +2,7 @@ import re #Biblioteca para detectar expresiones regulares
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
 import os
+
 #Funciones relativas a la seguridad del programa
 
 #Algoritmo para comprobar que una contraseña es robusta
@@ -34,6 +35,7 @@ def verificar_contrasena(contrasena, hash, salt):
         return False
 
 #Algoritmos para el cifrado
+#Cifrado de información
 def cifrar(text, key):
     nonce = os.urandom(12)
     #Configuración del algoritmo
@@ -41,6 +43,7 @@ def cifrar(text, key):
     texto_cifrado = chacha.encrypt(nonce, text, None)
     return texto_cifrado.hex(), nonce.hex()
 
+#Cifrado de keys utilizadas en el cifrado de información
 def cifrar_clave(clave_cifrar):
     nonce = os.urandom(12)
     with open("storage/clave.txt", "r") as File:
@@ -50,6 +53,7 @@ def cifrar_clave(clave_cifrar):
     cifrado = chacha.encrypt(nonce, clave_cifrar, None)
     return cifrado, nonce
 
+#Descifrado de datos
 def descifrar(text, key_cifrada, nonce1, nonce2):
     with open('storage/clave.txt', 'r') as File:
         clave_maestra_hex = File.read().strip()
