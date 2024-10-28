@@ -72,14 +72,16 @@ def iniciar_sesion_m():
     contrasena = getpass.getpass("Introduce tu contraseña: ")
     json = Json.Json("storage/medicos.json")
     json.load()
-    for item in json.data:
-        if item["usuario"] == usuario:
-            salt = bytes.fromhex(item["salt"])
-            hash = bytes.fromhex(item["hash"])
-            if Seguridad.verificar_contrasena(contrasena, salt, hash):
-                return usuario
-        else:
-            print("Las credenciales no son correctas")
-            time.sleep(1)
-            return None
+    item = json.find_item(usuario, "usuario")
+    if item == None:
+        print("No encontrado")
+        return
+    salt = bytes.fromhex(item["salt"])
+    hash = bytes.fromhex(item["hash"])
+    if Seguridad.verificar_contrasena(contrasena, salt, hash):
+        return usuario
+    else:
+        print("Las credenciales no son correctas")
+        input()
+        return None
     return

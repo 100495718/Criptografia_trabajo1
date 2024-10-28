@@ -31,6 +31,7 @@ class Json():
         for item in self.data:
             if value == item[key]:
                 return item
+        print("key no encontrada")
         return None
 
     #Añadir un elemento al json

@@ -6,6 +6,7 @@ import Clave
 #Clase para lo relacionado con los expedientes médicos
 class Paciente:
     def __init__(self,
+                 usuario: str,
                  nombre: str,
                  apellido1: str,
                  apellido2: str,
@@ -76,6 +77,7 @@ def trans_a_obj(dic):
 #Crear un paciente
 def agregar():
     #print("Agregar paciente")
+    usuario = input("Nombre de usuario para el paciente: ")
     nombre = input("Nombre del paciente: ")
     apellido1 = input("Primer apellido del paciente: ")
     apellido2 = input("Segundo apellido del paciente: ")
@@ -88,7 +90,7 @@ def agregar():
     cuenta = input("Número de cuenta bancaria del paciente: ")
     diagnostico = input("Diagnóstico del paciente: ")
 
-    nuevo_paciente = Paciente(nombre, apellido1, apellido2, edad, sexo, ciudad,
+    nuevo_paciente = Paciente(usuario, nombre, apellido1, apellido2, edad, sexo, ciudad,
                               calle, numero, movil, cuenta, diagnostico)
     guardar_paciente(nuevo_paciente)
     print("\nEl paciente se ha creado correctamente\n")
@@ -118,6 +120,27 @@ def cifrar_paciente(paciente):
     #input()
     return paciente
 
+def descifrar_paciente(paciente):
+    json_claves = Json.Json("storage/cifrado_info.json")
+    json_claves.load()
+    print(paciente.usuario)
+    input()
+    claves = json_claves.find_item(paciente.usuario, "usuario")
+    key = bytes.fromhex(claves["key"])
+    nonce = bytes.fromhex(claves["nonce"])
+    print(paciente.transf_a_dic())
+    paciente.nombre = Seguridad.descifrar(bytes.fromhex(paciente.nombre), key, bytes.fromhex(paciente.nonce_nombre), nonce).decode('utf-8')
+    paciente.apellido1 = Seguridad.descifrar(bytes.fromhex(paciente.apellido1), key, bytes.fromhex(paciente.nonce_apellido1), nonce).decode('utf-8')
+    paciente.apellido2 = Seguridad.descifrar(bytes.fromhex(paciente.apellido2), key, bytes.fromhex(paciente.nonce_apellido2), nonce).decode('utf-8')
+    paciente.edad = Seguridad.descifrar(bytes.fromhex(paciente.edad), key, bytes.fromhex(paciente.nonce_edad), nonce).decode('utf-8')
+    paciente.sexo = Seguridad.descifrar(bytes.fromhex(paciente.sexo), key, bytes.fromhex(paciente.nonce_sexo), nonce).decode('utf-8')
+    paciente.ciudad = Seguridad.descifrar(bytes.fromhex(paciente.ciudad), key, bytes.fromhex(paciente.nonce_ciudad), nonce).decode('utf-8')
+    paciente.calle = Seguridad.descifrar(bytes.fromhex(paciente.calle), key, bytes.fromhex(paciente.nonce_calle), nonce).decode('utf-8')
+    paciente.numero = Seguridad.descifrar(bytes.fromhex(paciente.numero), key, bytes.fromhex(paciente.nonce_numero), nonce).decode('utf-8')
+    paciente.movil = Seguridad.descifrar(bytes.fromhex(paciente.movil), key, bytes.fromhex(paciente.nonce_movil), nonce).decode('utf-8')
+    paciente.cuenta = Seguridad.descifrar(bytes.fromhex(paciente.cuenta), key, bytes.fromhex(paciente.nonce_cuenta), nonce).decode('utf-8')
+    return paciente
+
 def guardar_paciente(paciente):
     cifrar_paciente(paciente)
     json = Json.Json("storage/pacientes_expediente.json")
@@ -125,81 +148,6 @@ def guardar_paciente(paciente):
     json.add_item(data)
     #print("paciente guardado")
     #input()
-    return
-
-#Modificar datos de un paciente
-def modificar():
-    #print("Modificar paciente")
-    json = Json.Json("storage/pacientes_expediente.json")
-    json.load()
-    usuario = input("Introduce el nombre de usuario que quieres modificar:")
-    paciente_dic = json.find_item(usuario, "usuario")
-    if paciente_dic == None:
-        print("Este paciente no existe")
-        input()
-        return
-    clave = input("Introduce el nombre de la clave del diccionario:")
-    if clave not in ["diagnostico", "nombre", "apellido1", "apellido2", "edad", "sexo"]:
-        print("Ese dato no se puede modificar o no existe")
-        input()
-        return
-    valor = input("Escribe el nuevo valor: \n")
-    json.delete_item(usuario, "usuario")
-    paciente_dic[clave] = valor
-    paciente = trans_a_obj(paciente_dic)
-    #Mantener el mismo usuario
-    paciente.usuario = usuario
-    guardar_paciente(paciente)
-    print("\nSe han modificado los datos correctamente\n")
-    print("Pulse enter para volver al menú")
-    input()
-    return
-
-#Buscar un paciente para obtener más información
-def buscar():
-    #print("Buscar paciente")
-    usuario = input("Introduce el nombre de usuario del paciente: ")
-    json = Json.Json("storage/pacientes_expediente.json")
-    paciente = json.find_item(usuario, "usuario")
-    if paciente == None:
-        print("Ese usuario no existe")
-        input()
-        return
-    else:
-        json_claves = Json.Json("storage/claves_expediente.json")
-        json_claves.load()
-        claves = json_claves.find_item(usuario, "usuario")
-        if claves == None: print("calve none")
-        key = bytes.fromhex(claves["key"])
-        nonce = bytes.fromhex(claves["nonce"])
-        nombre = Seguridad.descifrar(bytes.fromhex(item["nombre"]), key, bytes.fromhex(item["nonce_nombre"]), nonce)
-        apellido1 = Seguridad.descifrar(bytes.fromhex(item["apellido1"]), key, bytes.fromhex(item["nonce_apellido1"]),
-                                        nonce)
-        apellido2 = Seguridad.descifrar(bytes.fromhex(item["apellido2"]), key, bytes.fromhex(item["nonce_apellido2"]),
-                                        nonce)
-        edad = Seguridad.descifrar(bytes.fromhex(item["edad"]), key, bytes.fromhex(item["nonce_edad"]), nonce)
-        sexo = Seguridad.descifrar(bytes.fromhex(item["sexo"]), key, bytes.fromhex(item["nonce_sexo"]),
-                                        nonce)
-        movil = Seguridad.descifrar(bytes.fromhex(item["movil"]), key, bytes.fromhex(item["nonce_movil"]),
-                                        nonce)
-        diagnostico = Seguridad.descifrar(bytes.fromhex(item["diagnostico"]), key, bytes.fromhex(item["nonce_diagnostico"]), nonce)
-
-        nombre_descifrado = nombre.decode('utf-8')
-        apellido1_descifrado = apellido1.decode('utf-8')
-        apellido2_descifrado = apellido2.decode('utf-8')
-        edad_descifrado = edad.decode('utf-8')
-        sexo_descifrado = sexo.decode('utf-8')
-        movil_descifrado = movil.decode('utf-8')
-        diagnostico_descifrado = diagnostico.decode('utf-8')
-
-        print(f"Nombre: {nombre_descifrado}")
-        print(f"Apellido1: {apellido1_descifrado}")
-        print(f"Apellido2: {apellido2_descifrado}")
-        print(f"Edad: {edad_descifrado}")
-        print(f"Sexo: {sexo_descifrado}")
-        print(f"Movil: {movil_descifrado}")
-        print(f"Diagnostico: {diagnostico_descifrado}")
-        print("\nPulse enter para volver al menú")
     return
 
 #Mostrar lista de todos los pacientes
@@ -221,12 +169,93 @@ def mostrar():
         apellido1 = Seguridad.descifrar(bytes.fromhex(item["apellido1"]), key, bytes.fromhex(item["nonce_apellido1"]), nonce)
         apellido2 = Seguridad.descifrar(bytes.fromhex(item["apellido2"]), key, bytes.fromhex(item["nonce_apellido2"]), nonce)
 
-        # Convertimos a texto y mostramos
         nombre_descifrado = nombre.decode('utf-8')
         apellido1_descifrado = apellido1.decode('utf-8')
         apellido2_descifrado = apellido2.decode('utf-8')
 
-        print(f"Usuario: {usuario}\nNombre completo: {nombre_descifrado}{apellido1_descifrado}{apellido2_descifrado}\n")
+        print(f"Usuario: {usuario}\nNombre completo: {nombre_descifrado} {apellido1_descifrado} {apellido2_descifrado}\n")
     print("\nPulse enter para volver al menú\n")
     input()
     return
+
+def mostrar_datos_paciente(paciente):
+    json_expedientes = Json.Json("storage/pacientes_expediente.json")
+    json_expedientes.load()
+"""
+#Buscar un paciente para obtener más información
+def buscar():
+    #print("Buscar paciente")
+    usuario = input("Introduce el nombre de usuario del paciente: ")
+    json = Json.Json("storage/pacientes_expediente.json")
+    paciente = json.find_item(usuario, "usuario")
+    if paciente == None:
+        print("Ese usuario no existe")
+        input()
+        return
+    else:
+        json_claves = Json.Json("storage/claves_expediente.json")
+        json_claves.load()
+        claves = json_claves.find_item(usuario, "usuario")
+        if claves == None:
+            print("Clave para descifrar no encontrada")
+            input()
+            return
+        key = bytes.fromhex(claves["key"])
+        nonce = bytes.fromhex(claves["nonce"])
+
+        nombre = Seguridad.descifrar(bytes.fromhex(item["nombre"]), key, bytes.fromhex(item["nonce_nombre"]), nonce)
+        apellido1 = Seguridad.descifrar(bytes.fromhex(item["apellido1"]), key, bytes.fromhex(item["nonce_apellido1"]),nonce)
+        apellido2 = Seguridad.descifrar(bytes.fromhex(item["apellido2"]), key, bytes.fromhex(item["nonce_apellido2"]),nonce)
+        edad = Seguridad.descifrar(bytes.fromhex(item["edad"]), key, bytes.fromhex(item["nonce_edad"]), nonce)
+        sexo = Seguridad.descifrar(bytes.fromhex(item["sexo"]), key, bytes.fromhex(item["nonce_sexo"]),nonce)
+        movil = Seguridad.descifrar(bytes.fromhex(item["movil"]), key, bytes.fromhex(item["nonce_movil"]),nonce)
+        diagnostico = Seguridad.descifrar(bytes.fromhex(item["diagnostico"]), key, bytes.fromhex(item["nonce_diagnostico"]), nonce)
+
+        nombre_descifrado = nombre.decode('utf-8')
+        apellido1_descifrado = apellido1.decode('utf-8')
+        apellido2_descifrado = apellido2.decode('utf-8')
+        edad_descifrado = edad.decode('utf-8')
+        sexo_descifrado = sexo.decode('utf-8')
+        movil_descifrado = movil.decode('utf-8')
+        diagnostico_descifrado = diagnostico.decode('utf-8')
+
+        print(f"Nombre: {nombre_descifrado}")
+        print(f"Apellido1: {apellido1_descifrado}")
+        print(f"Apellido2: {apellido2_descifrado}")
+        print(f"Edad: {edad_descifrado}")
+        print(f"Sexo: {sexo_descifrado}")
+        print(f"Movil: {movil_descifrado}")
+        print(f"Diagnostico: {diagnostico_descifrado}")
+        print("\nPulse enter para volver al menú")
+    return"""
+
+"""
+#Modificar datos de un paciente
+def modificar():
+    #print("Modificar paciente")
+    json = Json.Json("storage/pacientes_expediente.json")
+    json.load()
+    json_claves = Json.Json("storage/cifrado_info.json")
+    json_claves.load()
+    usuario = input("Introduce el nombre de usuario que quieres modificar:")
+    paciente_dic = json.find_item(usuario, "usuario")
+    if paciente_dic == None:
+        print("Este paciente no existe")
+        input()
+        return
+    clave = input("Introduce el nombre de la clave del diccionario:")
+    if clave not in ["diagnostico", "nombre", "apellido1", "apellido2", "edad", "sexo"]:
+        print("Ese dato no se puede modificar o no existe")
+        input()
+        return
+    valor = input("Escribe el nuevo valor: \n")
+    paciente = trans_a_obj(paciente_dic)
+    paciente_cifrado = cifrar_paciente(paciente)
+    paciente_descifrado = descifrar_paciente(paciente_cifrado)
+    paciente_descifrado.transf_a_dic()[clave] = valor
+    json.delete_item(usuario, "usuario")
+    json_claves.delete_item(usuario, "usuario")
+    guardar_paciente(paciente_descifrado)
+    print("Pulse enter para volver al menú")
+    input()
+    return"""
