@@ -1,5 +1,6 @@
 import re #Biblioteca para detectar expresiones regulares
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
 import os
 #Funciones relativas a la seguridad del programa
 
@@ -14,6 +15,7 @@ def contrasena_robusta(contrasena):
                         return True
     return False
 
+#Algoritmos para el almacenamiento de contraseñas
 def derivar_contrasena(contrasena:str):
     salt = os.urandom(16)
     #Configuración del algoritmo
@@ -30,4 +32,32 @@ def verificar_contrasena(contrasena, hash, salt):
         return True
     except Exception:
         return False
+
+#Algoritmos para el cifrado
+def cifrar(text):
+    nonce = os.urandom(12)
+    key = ChaCha20Poly1305.generate_key()
+    #Configuración del algoritmo
+    chacha = ChaCha20Poly1305(key)
+    texto_cifrado = chacha.encrypt(nonce, text, None)
+    clave_cifrada, nonce2 = cifrar_clave(key)
+    return text_cifrado, nonce2, texto_cifrado, nonce
+
+def cifrar_clave(key):
+    nonce = os.urandom(12)
+    with open('storage\clave.txt', 'rb') as File:
+        clave_maestra = File.read()
+    chacha = ChaCha20Poly1305(clave_maestra)
+    cifrado = chacha.encrypt(nonce, key, None)
+    return cifrado, nonce
+
+def descifrar(text, key_cifrada, nonce1, nonce2):
+    with open('storage\clave.txt', 'rb') as File:
+        clave_maestra = File.read()
+    chacha = ChaCha20Poly1305(clave_maestra)
+    clave_descifrada = chacha.decrypt(nonce2, key_cifrada, None)
+    chacha = ChaCha20Poly1305(clave_descifrada)
+    descifrado = chacha.decrypt(nonce1, text, None)
+    return descifrado
+
 
