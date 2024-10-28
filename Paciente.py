@@ -1,6 +1,5 @@
 import getpass
 import Json
-import time
 import Seguridad
 
 #Clase para llevar a cabo el inicio de sesión y registro de pacientes y mantener los datos de las cuentas separados
@@ -36,29 +35,25 @@ def registrar_p():
                             data = Paciente_usuario(usuario, hash, salt)
                             json_cuentas.add_item(data.transf_a_dic())
                             print("Se ha registrado exitosamente")
-                            time.sleep(1)
+                            input()
                             return
                         else:
                             print("Las contraseñas no coinciden")
-                            time.sleep(1)
+                            input()
                             return
                     else:
                         print("La contraseña no es segura")
-                        time.sleep(1)
+                        input()
                         return
-                else:
-                    print("No se puede crear una cuenta para este usuario")
-                    time.sleep(1)
-                    return
-        else:
-            print("No se puede crear una cuenta para este usuario")
-            time.sleep(1)
-            return
+            else:
+                print("No se puede crear una cuenta para este usuario")
+                input()
+                return
     else:
         for item in json_cuentas.data:
             if item["usuario"] == usuario:
                 print("Ya existe una cuenta con ese usuario")
-                time.sleep(1)
+                input()
                 return
             else:
                 if json_expedientes.data != []:
@@ -72,24 +67,20 @@ def registrar_p():
                                     data = Paciente_usuario(usuario, hash, salt)
                                     json_cuentas.add_item(data.transf_a_dic())
                                     print("Se ha registrado exitosamente")
-                                    time.sleep(1)
+                                    input()
                                     return
                                 else:
                                     print("Las contraseñas no coinciden")
-                                    time.sleep(1)
+                                    input()
                                     return
                             else:
                                 print("La contraseña no es segura")
-                                time.sleep(1)
+                                input()
                                 return
-                        else:
-                            print("No se puede crear una cuenta para este usuario")
-                            time.sleep(1)
-                            return
-                else:
-                    print("No se puede crear una cuenta para este usuario")
-                    time.sleep(1)
-                    return
+                    else:
+                        print("No se puede crear una cuenta para este usuario")
+                        input()
+                        return
     return
 
 def iniciar_sesion_p():

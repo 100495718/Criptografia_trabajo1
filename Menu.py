@@ -96,9 +96,13 @@ def menu_paciente(usuario):
             case "1":
                 #ver los datos del paciente actual
                 print("Ver mis datos")
+                print("Pulse enter para volver al menu")
+                input()
             case "2":
                 #modificar datos del paciente actual
                 print("Modificar mis datos")
+                print("Pulse enter para volver al menu")
+                input()
             case "3":
                 print("Volviendo al menú principal... \n")
                 time.sleep(1)

@@ -1,5 +1,23 @@
+import Seguridad
+import Json
 
 class Claves():
-    def __init__(self, usuario, key,):
+    def __init__(self, usuario, key):
+        self.usuario = usuario
+        self.key, self.nonce = Seguridad.cifrar_clave(key)
 
-#https://code-with-me.global.jetbrains.com/c4hIf_ReOKorXi81a65ziA#p=PY&fp=45AF01845B6A906BDE1DF0DBA6A27766C78319EBBD52A735BFBAF1A6820CEF17&newUi=true
+
+    #Transformar los datos del paciente a diccionario para usarlo al manejar json
+    def transf_a_dic(self):
+        return{
+            "usuario": self.usuario,
+            "key": self.key.hex(),
+            "nonce": self.nonce.hex()
+        }
+
+    def guardar(self):
+        json = Json.Json("storage/cifrado_info.json")
+        json.add_item(self.transf_a_dic())
+        return
+
+

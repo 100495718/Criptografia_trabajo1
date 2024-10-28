@@ -34,30 +34,33 @@ def verificar_contrasena(contrasena, hash, salt):
         return False
 
 #Algoritmos para el cifrado
-def cifrar(text):
+def cifrar(text, key):
     nonce = os.urandom(12)
-    key = ChaCha20Poly1305.generate_key()
+    #key = ChaCha20Poly1305.generate_key()
     #Configuración del algoritmo
     chacha = ChaCha20Poly1305(key)
     texto_cifrado = chacha.encrypt(nonce, text, None)
-    clave_cifrada, nonce2 = cifrar_clave(key)
-    return text_cifrado, nonce2, texto_cifrado, nonce
+    return texto_cifrado.hex(), nonce.hex()
 
-def cifrar_clave(key):
+def cifrar_clave(clave_cifrar):
     nonce = os.urandom(12)
-    with open('storage\clave.txt', 'rb') as File:
-        clave_maestra = File.read()
+    with open("storage/clave.txt", "r") as File:
+        clave_maestra_hex = File.read().strip()
+    clave_maestra = bytes.fromhex(clave_maestra_hex)
     chacha = ChaCha20Poly1305(clave_maestra)
-    cifrado = chacha.encrypt(nonce, key, None)
+    cifrado = chacha.encrypt(nonce, clave_cifrar, None)
     return cifrado, nonce
 
 def descifrar(text, key_cifrada, nonce1, nonce2):
-    with open('storage\clave.txt', 'rb') as File:
-        clave_maestra = File.read()
+    with open('storage/clave.txt', 'r') as File:
+        clave_maestra_hex = File.read().strip()
+    clave_maestra = bytes.fromhex(clave_maestra_hex)
     chacha = ChaCha20Poly1305(clave_maestra)
     clave_descifrada = chacha.decrypt(nonce2, key_cifrada, None)
     chacha = ChaCha20Poly1305(clave_descifrada)
     descifrado = chacha.decrypt(nonce1, text, None)
     return descifrado
 
-
+def key_aleatoria():
+    key = ChaCha20Poly1305.generate_key()
+    return key
