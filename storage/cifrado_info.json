@@ -1,12 +1,7 @@
 [
   {
     "usuario": "aaa",
-    "key": "f1a9199c24210761d5d62ad96716473892485a24329c225e4eb156ce3ecb0cee7462bd7bf7a116a820efee5135fe6313",
-    "nonce": "2eceb4694136dc9ed67a891b"
-  },
-  {
-    "usuario": "djhfjddkjfhsdjdjfhkdsjf",
-    "key": "bdde2483eb75f19cc478683163ae4ef96ec413d11609016a70f075749a9f53803abc16544475a5590041452bc2e7df4a",
-    "nonce": "dde54cad9f47669c94137203"
+    "key": "8681d3bdbfc92f5bf52f07e7843ffdddd17b7e3c1e0498c54f222e7c1c19706416f00d279ba11433a5bc37f242608ff2",
+    "nonce": "ca59d8127c928e581754f064"
   }
 ]
