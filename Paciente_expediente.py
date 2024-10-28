@@ -32,8 +32,11 @@ class Paciente:
         self.calle = calle
         self.nonce_calle = None
         self.numero = numero
+        self.nonce_numero = None
         self.movil = movil
+        self.nonce_movil = None
         self.cuenta = cuenta
+        self.nonce_cuenta = None
         self.diagnostico = diagnostico
         self.nonce_diagnostico = None
 
