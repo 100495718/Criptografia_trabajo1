@@ -2,6 +2,7 @@ import Json
 import Seguridad
 import Clave
 
+
 #Clase para lo relacionado con los expedientes médicos
 class Paciente:
     def __init__(self,
