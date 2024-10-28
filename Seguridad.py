@@ -36,7 +36,6 @@ def verificar_contrasena(contrasena, hash, salt):
 #Algoritmos para el cifrado
 def cifrar(text, key):
     nonce = os.urandom(12)
-    #key = ChaCha20Poly1305.generate_key()
     #Configuración del algoritmo
     chacha = ChaCha20Poly1305(key)
     texto_cifrado = chacha.encrypt(nonce, text, None)
