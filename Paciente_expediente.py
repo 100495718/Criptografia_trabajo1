@@ -91,7 +91,7 @@ def agregar():
     nuevo_paciente = Paciente(nombre, apellido1, apellido2, edad, sexo, ciudad,
                               calle, numero, movil, cuenta, diagnostico)
     guardar_paciente(nuevo_paciente)
-    print("El paciente se ha creado correctamente\n")
+    print("\nEl paciente se ha creado correctamente\n")
     print("Presione enter para volver al menú")
     input()
     return
@@ -144,8 +144,11 @@ def modificar():
     json.delete_item(usuario, "usuario")
     paciente_dic[clave] = valor
     paciente = trans_a_obj(paciente_dic)
+    #Mantener el mismo usuario
+    paciente.usuario = usuario
     guardar_paciente(paciente)
-    print("Se han modificado los datos correctamente")
+    print("\nSe han modificado los datos correctamente\n")
+    print("Pulse enter para volver al menú")
     input()
     return
 
@@ -153,41 +156,38 @@ def modificar():
 def buscar():
     #print("Buscar paciente")
     clave = input("Introduce el nombre de la clave del diccionario:")
+    if clave not in ["usuario", "nombre", "apellido1", "apellido2"]:
+        print("No se permite buscar por esa clave")
     valor = input("Escribe el valor: \n")
     json = Json.Json("storage/pacientes_expediente.json")
-    paciente = json.find_item(valor, clave)
-    print(f"Usuario: {paciente['usuario']}, \n"
-          f"Nombre: {paciente['nombre']}, \n"
-          f"Apellido1: {paciente['apellido1']}, \n"
-          f"Apellido2: {paciente['apellido2']}, \n"
-          f"Sexo: {paciente['sexo']}, \n"
-          f"Edad: {paciente['edad']}, \n"
-          f"Móvil: {paciente['movil']}, \n"
-          f"Calle: {paciente['calle']}, \n"
-          f"Numero: {paciente['numero']}, \n"
-          f"Ciudad: {paciente['ciudad']}, \n"
-          f"Diagnostico: {paciente['diagnostico']}, \n"
-          )
-    print("Pulse enter para volver al menú\n")
-    input()
+
     return
 
 #Mostrar lista de todos los pacientes
 def mostrar():
     #print("Mostrar pacientes")
-    json = Json.Json("storage/pacientes_expediente.json")
-    json.load()
-    if not json.data:
+    json_expedientes = Json.Json("storage/pacientes_expediente.json")
+    json_expedientes.load()
+    json_claves = Json.Json("storage/cifrado_info.json")
+    json_claves.load()
+    if not json_expedientes.data:
         print("No hay pacientes registrados.")
         return
+    for item in json_expedientes.data:
+        usuario = item["usuario"]
+        claves = json_claves.find_item(usuario, "usuario")
+        key = bytes.fromhex(claves["key"])
+        nonce = bytes.fromhex(claves["nonce"])
+        nombre = Seguridad.descifrar(bytes.fromhex(item["nombre"]), key, bytes.fromhex(item["nonce_nombre"]), nonce)
+        apellido1 = Seguridad.descifrar(bytes.fromhex(item["apellido1"]), key, bytes.fromhex(item["nonce_apellido1"]), nonce)
+        apellido2 = Seguridad.descifrar(bytes.fromhex(item["apellido2"]), key, bytes.fromhex(item["nonce_apellido2"]), nonce)
 
-    print("Lista de pacientes: \n")
-    for i, paciente in enumerate(json.data, start=1):
-        print(f"{i}. Nombre: {paciente['nombre']}, \n"
-              f"   Apellido1: {paciente['apellido1']}, \n"
-              f"   Apellido2: {paciente['apellido2']}, \n"
-              f"   Movil: {paciente['movil']}, \n"
-              )
-    print("Pulse enter para volver al menú\n")
+        # Convertimos a texto y mostramos
+        nombre_descifrado = nombre.decode('utf-8')
+        apellido1_descifrado = apellido1.decode('utf-8')
+        apellido2_descifrado = apellido2.decode('utf-8')
+
+        print(f"Nombre: {nombre_descifrado}\n Primer apellido {apellido1_descifrado}\nSegundo apellido {apellido2_descifrado}\n")
+    print("\nPulse enter para volver al menú\n")
     input()
     return
