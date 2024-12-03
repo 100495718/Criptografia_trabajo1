@@ -87,7 +87,6 @@ def iniciar_sesion_p():
                 return usuario
             else:
                 print("Las credenciales no son correctas")
-                time.sleep(1)
                 return None
     return
 

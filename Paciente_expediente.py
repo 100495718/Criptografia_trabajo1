@@ -105,25 +105,18 @@ def cifrar_paciente(paciente):
     if json.find_item(paciente.usuario, "usuario") != None:
         json.delete_item(paciente.usuario, "usuario")
 
-    #Genero la clave simétrica
-    key = Seguridad.key_aleatoria()
-
-    #Guardo la key cifrada con la clave maestra y el nonce
-    claves = Clave.Claves(paciente.usuario, key)
-    claves.guardar()
-
     #Cifro los datos
-    paciente.nombre, paciente.nonce_nombre = Seguridad.cifrar(paciente.nombre.encode('utf-8'), key)
-    paciente.apellido1, paciente.nonce_apellido1 = Seguridad.cifrar(paciente.apellido1.encode('utf-8'), key)
-    paciente.apellido2, paciente.nonce_apellido2 = Seguridad.cifrar(paciente.apellido2.encode('utf-8'), key)
-    paciente.edad, paciente.nonce_edad = Seguridad.cifrar(str(paciente.edad).encode('utf-8'), key)
-    paciente.sexo, paciente.nonce_sexo = Seguridad.cifrar(paciente.sexo.encode('utf-8'), key)
-    paciente.ciudad, paciente.nonce_ciudad = Seguridad.cifrar(paciente.ciudad.encode('utf-8'), key)
-    paciente.calle, paciente.nonce_calle = Seguridad.cifrar(paciente.calle.encode('utf-8'), key)
-    paciente.numero, paciente.nonce_numero = Seguridad.cifrar(str(paciente.numero).encode('utf-8'), key)
-    paciente.movil, paciente.nonce_movil = Seguridad.cifrar(str(paciente.movil).encode('utf-8'), key)
-    paciente.cuenta, paciente.nonce_cuenta = Seguridad.cifrar(paciente.cuenta.encode('utf-8'), key)
-    paciente.diagnostico, paciente.nonce_diagnostico = Seguridad.cifrar(paciente.diagnostico.encode('utf-8'), key)
+    paciente.nombre, paciente.nonce_nombre = Seguridad.
+    paciente.apellido1, paciente.nonce_apellido1 = Seguridad.
+    paciente.apellido2, paciente.nonce_apellido2 = Seguridad.
+    paciente.edad, paciente.nonce_edad = Seguridad.
+    paciente.sexo, paciente.nonce_sexo = Seguridad.
+    paciente.ciudad, paciente.nonce_ciudad = Seguridad.
+    paciente.calle, paciente.nonce_calle = Seguridad.
+    paciente.numero, paciente.nonce_numero = Seguridad.
+    paciente.movil, paciente.nonce_movil = Seguridad.
+    paciente.cuenta, paciente.nonce_cuenta = Seguridad.
+    paciente.diagnostico, paciente.nonce_diagnostico = Seguridad.
     return paciente
 
 #Función para descifrar datos de un paciente
@@ -138,16 +131,16 @@ def descifrar_paciente(paciente):
     nonce = bytes.fromhex(claves["nonce"])
 
     #Descifrar datos
-    paciente.nombre = Seguridad.descifrar(bytes.fromhex(paciente.nombre), key, bytes.fromhex(paciente.nonce_nombre), nonce).decode('utf-8')
-    paciente.apellido1 = Seguridad.descifrar(bytes.fromhex(paciente.apellido1), key, bytes.fromhex(paciente.nonce_apellido1), nonce).decode('utf-8')
-    paciente.apellido2 = Seguridad.descifrar(bytes.fromhex(paciente.apellido2), key, bytes.fromhex(paciente.nonce_apellido2), nonce).decode('utf-8')
-    paciente.edad = Seguridad.descifrar(bytes.fromhex(paciente.edad), key, bytes.fromhex(paciente.nonce_edad), nonce).decode('utf-8')
-    paciente.sexo = Seguridad.descifrar(bytes.fromhex(paciente.sexo), key, bytes.fromhex(paciente.nonce_sexo), nonce).decode('utf-8')
-    paciente.ciudad = Seguridad.descifrar(bytes.fromhex(paciente.ciudad), key, bytes.fromhex(paciente.nonce_ciudad), nonce).decode('utf-8')
-    paciente.calle = Seguridad.descifrar(bytes.fromhex(paciente.calle), key, bytes.fromhex(paciente.nonce_calle), nonce).decode('utf-8')
-    paciente.numero = Seguridad.descifrar(bytes.fromhex(paciente.numero), key, bytes.fromhex(paciente.nonce_numero), nonce).decode('utf-8')
-    paciente.movil = Seguridad.descifrar(bytes.fromhex(paciente.movil), key, bytes.fromhex(paciente.nonce_movil), nonce).decode('utf-8')
-    paciente.cuenta = Seguridad.descifrar(bytes.fromhex(paciente.cuenta), key, bytes.fromhex(paciente.nonce_cuenta), nonce).decode('utf-8')
+    paciente.nombre = Seguridad.
+    paciente.apellido1 = Seguridad.
+    paciente.apellido2 = Seguridad.
+    paciente.edad = Seguridad.
+    paciente.sexo = Seguridad.
+    paciente.ciudad = Seguridad.
+    paciente.calle = Seguridad.
+    paciente.numero = Seguridad.
+    paciente.movil = Seguridad.
+    paciente.cuenta = Seguridad.
     return paciente
 
 #Función para guardar un expediente en el json
@@ -180,9 +173,9 @@ def mostrar():
         nonce = bytes.fromhex(claves["nonce"])
 
         #Descifrar los datos
-        nombre = Seguridad.descifrar(bytes.fromhex(item["nombre"]), key, bytes.fromhex(item["nonce_nombre"]), nonce)
-        apellido1 = Seguridad.descifrar(bytes.fromhex(item["apellido1"]), key, bytes.fromhex(item["nonce_apellido1"]), nonce)
-        apellido2 = Seguridad.descifrar(bytes.fromhex(item["apellido2"]), key, bytes.fromhex(item["nonce_apellido2"]), nonce)
+        nombre = Seguridad.
+        apellido1 = Seguridad.
+        apellido2 = Seguridad.
 
         #Transformar la información descifrada a texto normal
         nombre_descifrado = nombre.decode('utf-8')
@@ -212,13 +205,13 @@ def mostrar_datos_paciente(usuario):
     nonce = bytes.fromhex(claves["nonce"])
 
     #Descifrar los datos almacenados en hexadecimal en archivos .json
-    nombre = Seguridad.descifrar(bytes.fromhex(paciente["nombre"]), key, bytes.fromhex(paciente["nonce_nombre"]), nonce)
-    apellido1 = Seguridad.descifrar(bytes.fromhex(paciente["apellido1"]), key, bytes.fromhex(paciente["nonce_apellido1"]),nonce)
-    apellido2 = Seguridad.descifrar(bytes.fromhex(paciente["apellido2"]), key, bytes.fromhex(paciente["nonce_apellido2"]),nonce)
-    edad = Seguridad.descifrar(bytes.fromhex(paciente["edad"]), key, bytes.fromhex(paciente["nonce_edad"]), nonce)
-    sexo = Seguridad.descifrar(bytes.fromhex(paciente["sexo"]), key, bytes.fromhex(paciente["nonce_sexo"]), nonce)
-    movil = Seguridad.descifrar(bytes.fromhex(paciente["movil"]), key, bytes.fromhex(paciente["nonce_movil"]), nonce)
-    diagnostico = Seguridad.descifrar(bytes.fromhex(paciente["diagnostico"]), key, bytes.fromhex(paciente["nonce_diagnostico"]),nonce)
+    nombre = Seguridad.
+    apellido1 = Seguridad.
+    apellido2 = Seguridad.
+    edad = Seguridad.
+    sexo = Seguridad.
+    movil = Seguridad.
+    diagnostico = Seguridad.
 
     #Transformar los datos descifrados a texto normal
     nombre_descifrado = nombre.decode('utf-8')
@@ -246,54 +239,6 @@ def buscar():
     return
 
 #______________________________________FUNCIONES EN DESARROLLO_________________________________________
-
-"""
-#Buscar un paciente para obtener más información
-def buscar():
-    #print("Buscar paciente")
-    usuario = input("Introduce el nombre de usuario del paciente: ")
-    json = Json.Json("storage/pacientes_expediente.json")
-    paciente = json.find_item(usuario, "usuario")
-    if paciente == None:
-        print("Ese usuario no existe")
-        input()
-        return
-    else:
-        json_claves = Json.Json("storage/claves_expediente.json")
-        json_claves.load()
-        claves = json_claves.find_item(usuario, "usuario")
-        if claves == None:
-            print("Clave para descifrar no encontrada")
-            input()
-            return
-        key = bytes.fromhex(claves["key"])
-        nonce = bytes.fromhex(claves["nonce"])
-
-        nombre = Seguridad.descifrar(bytes.fromhex(item["nombre"]), key, bytes.fromhex(item["nonce_nombre"]), nonce)
-        apellido1 = Seguridad.descifrar(bytes.fromhex(item["apellido1"]), key, bytes.fromhex(item["nonce_apellido1"]),nonce)
-        apellido2 = Seguridad.descifrar(bytes.fromhex(item["apellido2"]), key, bytes.fromhex(item["nonce_apellido2"]),nonce)
-        edad = Seguridad.descifrar(bytes.fromhex(item["edad"]), key, bytes.fromhex(item["nonce_edad"]), nonce)
-        sexo = Seguridad.descifrar(bytes.fromhex(item["sexo"]), key, bytes.fromhex(item["nonce_sexo"]),nonce)
-        movil = Seguridad.descifrar(bytes.fromhex(item["movil"]), key, bytes.fromhex(item["nonce_movil"]),nonce)
-        diagnostico = Seguridad.descifrar(bytes.fromhex(item["diagnostico"]), key, bytes.fromhex(item["nonce_diagnostico"]), nonce)
-
-        nombre_descifrado = nombre.decode('utf-8')
-        apellido1_descifrado = apellido1.decode('utf-8')
-        apellido2_descifrado = apellido2.decode('utf-8')
-        edad_descifrado = edad.decode('utf-8')
-        sexo_descifrado = sexo.decode('utf-8')
-        movil_descifrado = movil.decode('utf-8')
-        diagnostico_descifrado = diagnostico.decode('utf-8')
-
-        print(f"Nombre: {nombre_descifrado}")
-        print(f"Apellido1: {apellido1_descifrado}")
-        print(f"Apellido2: {apellido2_descifrado}")
-        print(f"Edad: {edad_descifrado}")
-        print(f"Sexo: {sexo_descifrado}")
-        print(f"Movil: {movil_descifrado}")
-        print(f"Diagnostico: {diagnostico_descifrado}")
-        print("\nPulse enter para volver al menú")
-    return"""
 
 """
 #Modificar datos de un paciente

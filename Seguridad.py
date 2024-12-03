@@ -1,6 +1,10 @@
 import re #Biblioteca para detectar expresiones regulares
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
-from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import os
 
 #Funciones relativas a la seguridad del programa
@@ -37,57 +41,53 @@ def verificar_contrasena(contrasena, hash, salt):
     except Exception:
         return False
 
-#Algoritmos para el cifrado, algoritmo ChaCHa20Poly1305
-#Cifrado de información
-def cifrar(text, key):
-    #Genero un nonce
+#Algoritmos para el cifrado, cifrado híbrido
+#Generar clave pública y privada
+def generate_rsa_keys():
+    private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    public_key = private_key.public_key()
+    return private_key, public_key
+
+
+#Cifrado
+def hybrid_encrypt(public_key, plaintext):
+    # Generar clave simétrica
+    symmetric_key = AESGCM.generate_key(bit_length=256)
+    aesgcm = AESGCM(symmetric_key)
+
+    # Generar un nonce para AES-GCM
     nonce = os.urandom(12)
 
-    #Configuración del algoritmo
-    chacha = ChaCha20Poly1305(key)
+    # Cifrar con AES-GCM
+    ciphertext = aesgcm.encrypt(nonce, plaintext, None)
 
-    #Cifro
-    texto_cifrado = chacha.encrypt(nonce, text, None)
-    return texto_cifrado.hex(), nonce.hex()
+    # Cifrar la clave simétrica con RSA
+    encrypted_key = public_key.encrypt(
+        symmetric_key,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
 
-#Cifrado de keys utilizadas en el cifrado de información
-def cifrar_clave(clave_cifrar):
-    #Genero un nonce
-    nonce = os.urandom(12)
+    return nonce, ciphertext, encrypted_key
 
-    #Obtengo la clave maestra
-    with open("storage/clave.txt", "r") as File:
-        clave_maestra_hex = File.read().strip()
-    clave_maestra = bytes.fromhex(clave_maestra_hex)
 
-    #Configuro el algoritmo
-    chacha = ChaCha20Poly1305(clave_maestra)
+#Descifrado
+def hybrid_decrypt(private_key, nonce, ciphertext, encrypted_key):
+    # Descifrar clave simétrica con RSA
+    symmetric_key = private_key.decrypt(
+        encrypted_key,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
 
-    #Cifro
-    cifrado = chacha.encrypt(nonce, clave_cifrar, None)
-    return cifrado, nonce
+    # Descifrar datos cifrados con AES-GCM
+    aesgcm = AESGCM(symmetric_key)
+    plaintext = aesgcm.decrypt(nonce, ciphertext, None)
 
-#Descifrado de datos
-def descifrar(text, key_cifrada, nonce1, nonce2):
-    #Obtengo la clave maestra
-    with open('storage/clave.txt', 'r') as File:
-        clave_maestra_hex = File.read().strip()
-    clave_maestra = bytes.fromhex(clave_maestra_hex)
-
-    #Configuro el algoritmo para descifrar la clave simétrica
-    chacha = ChaCha20Poly1305(clave_maestra)
-
-    #Descifro la clave simétrica
-    clave_descifrada = chacha.decrypt(nonce2, key_cifrada, None)
-
-    #Configuro el algoritmo para descifrar información de pacientes
-    chacha = ChaCha20Poly1305(clave_descifrada)
-
-    #Descifro
-    descifrado = chacha.decrypt(nonce1, text, None)
-    return descifrado
-
-#Función para generar una key aleatoria
-def key_aleatoria():
-    key = ChaCha20Poly1305.generate_key()
-    return key
+    return plaintext
