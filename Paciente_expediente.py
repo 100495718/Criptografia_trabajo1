@@ -7,6 +7,7 @@ class Paciente:
     def __init__(self,
                  usuario: str,
                  nombre: str,
+                 clave_publica: str,
                  apellido1: str,
                  apellido2: str,
                  edad: int,
@@ -18,6 +19,7 @@ class Paciente:
                  cuenta: str,
                  diagnostico: str):
         self.usuario = (nombre+apellido1+apellido2).lower()
+        self.clave_publica = clave_publica
         self.nombre = nombre
         self.nonce_nombre = None
         self.apellido1 = apellido1
@@ -45,6 +47,7 @@ class Paciente:
     def transf_a_dic(self):
         return{
             "usuario": self.usuario,
+            "clave_publica": self.clave_publica,
             "nombre": self.nombre,
             "nonce_nombre": self.nonce_nombre,
             "apellido1": self.apellido1,

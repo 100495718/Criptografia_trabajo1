@@ -44,26 +44,26 @@ def verificar_contrasena(contrasena, hash, salt):
 #Algoritmos para el cifrado, cifrado híbrido
 #Generar clave pública y privada
 def generate_rsa_keys():
-    private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    public_key = private_key.public_key()
-    return private_key, public_key
+    clave_privada = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    clave_publica = clave_privada.public_key()
+    return clave_privada, clave_publica
 
 
 #Cifrado
-def hybrid_encrypt(public_key, plaintext):
+def cifrar(clave_publica, datos_a_cifrar):
     # Generar clave simétrica
-    symmetric_key = AESGCM.generate_key(bit_length=256)
-    aesgcm = AESGCM(symmetric_key)
+    clave_simetrica = AESGCM.generate_key(bit_length=128)
+    aesgcm = AESGCM(clave_simetrica)
 
     # Generar un nonce para AES-GCM
     nonce = os.urandom(12)
 
     # Cifrar con AES-GCM
-    ciphertext = aesgcm.encrypt(nonce, plaintext, None)
+    datos_cifrados = aesgcm.encrypt(nonce, datos_a_cifrar, None)
 
     # Cifrar la clave simétrica con RSA
-    encrypted_key = public_key.encrypt(
-        symmetric_key,
+    clave_simetrica_cifrada = clave_publica.encrypt(
+        clave_simetrica,
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
@@ -71,14 +71,14 @@ def hybrid_encrypt(public_key, plaintext):
         )
     )
 
-    return nonce, ciphertext, encrypted_key
+    return nonce, datos_cifrados, clave_simetrica_cifrada
 
 
 #Descifrado
-def hybrid_decrypt(private_key, nonce, ciphertext, encrypted_key):
+def descifrar(clave_privada, nonce, dato_cifrado, clave_simetrica_cifrada):
     # Descifrar clave simétrica con RSA
-    symmetric_key = private_key.decrypt(
-        encrypted_key,
+    clave_simetrica = clave_privada.decrypt(
+        clave_simetrica_cifrada,
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
@@ -87,7 +87,7 @@ def hybrid_decrypt(private_key, nonce, ciphertext, encrypted_key):
     )
 
     # Descifrar datos cifrados con AES-GCM
-    aesgcm = AESGCM(symmetric_key)
-    plaintext = aesgcm.decrypt(nonce, ciphertext, None)
+    aesgcm = AESGCM(clave_simetrica)
+    datos_descifrados = aesgcm.decrypt(nonce, dato_cifrado, None)
 
-    return plaintext
+    return datos_descifrados
