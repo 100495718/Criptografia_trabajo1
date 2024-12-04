@@ -26,8 +26,6 @@ def menu():
                 usuario = Medico.iniciar_sesion_m()
                 if usuario != None:
                     menu_medico()
-                print("\nPulse enter, para volver al menú")
-                input()
             case "2":
                 #Registro médico
                 Medico.registrar_m()
@@ -38,8 +36,6 @@ def menu():
                 usuario = Paciente.iniciar_sesion_p()
                 if usuario != None:
                     menu_paciente(usuario)
-                print("\nPulse enter, para volver al menú")
-                input()
             case "4":
                 #"Registro paciente"
                 Paciente.registrar_p()

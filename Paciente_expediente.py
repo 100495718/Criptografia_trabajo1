@@ -17,7 +17,7 @@ class Paciente:
                  movil: int,
                  cuenta: str,
                  diagnostico: str):
-        self.usuario = usuario,
+        self.usuario = usuario
         self.clave_privada = None,
         self.clave_sesion = None,
         self.nombre = nombre
@@ -130,11 +130,17 @@ def cifrar_paciente(paciente):
 
 #Función para descifrar datos de un paciente
 def descifrar_paciente(paciente):
-    #Carga del json donde están las claves del cifrado
+    # Carga del json donde están las claves del cifrado
     json_claves = Json.Json("storage/pacientes_expediente.json")
     json_claves.load()
 
-    claves = json_claves.find_item(paciente.usuario, "usuario")
+    paciente_dic = paciente.transf_a_dic()
+    claves = json_claves.find_item(paciente_dic["usuario"], "usuario")
+
+    if claves is None:
+        print(f"Error: No se encontraron claves para el paciente con usuario {paciente_dic['usuario']}")
+        return None  # Or handle it appropriately
+
     clave_privada = serialization.load_pem_private_key(
         bytes.fromhex(claves["clave_privada"]),
         password=None
@@ -177,7 +183,8 @@ def mostrar():
 
     indice = 1
     for item in json_expedientes.data:
-        paciente = descifrar_paciente(item)
+        paciente = trans_a_obj(item)
+        paciente = descifrar_paciente(paciente)
         print(f"{indice}-Nombre completo: {paciente.nombre} {paciente.apellido1} {paciente.apellido2}")
         indice += 1
     return
@@ -196,7 +203,8 @@ def mostrar_datos_paciente(usuario):
         return
 
     # Descifrar los datos del paciente
-    paciente = descifrar_paciente(paciente_cifrado)
+    paciente = trans_a_obj(paciente_cifrado)
+    paciente = descifrar_paciente(paciente)
 
     # Mostrar los datos descifrados
     print(f"Nombre completo: {paciente.nombre} {paciente.apellido1} {paciente.apellido2}")
