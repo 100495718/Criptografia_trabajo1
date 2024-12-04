@@ -90,3 +90,27 @@ def descifrar(aesgcm, nonce, dato_cifrado):
     # Descifrar datos cifrados con AES-GCM
     datos_descifrados = aesgcm.decrypt(nonce, dato_cifrado, None)
     return datos_descifrados
+
+def generar_firma(data, clave_privada):
+    firma = clave_privada.sign(
+        data,
+        padding.PSS(
+        mgf=padding.MGF1(hashes.SHA256()),
+        salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+    return firma
+
+def verificacion_firma(clave_privada, firma, data):
+    clave_publica = clave_privada.public_key()
+    clave_publica.verify(
+        firma,
+        data,
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+    return

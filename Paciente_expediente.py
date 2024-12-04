@@ -18,8 +18,8 @@ class Paciente:
                  cuenta: str,
                  diagnostico: str):
         self.usuario = usuario
-        self.clave_privada = None,
-        self.clave_sesion = None,
+        self.clave_sesion = None
+        self.clave_publica = None
         self.nombre = nombre
         self.nonce_nombre = None
         self.apellido1 = apellido1
@@ -48,7 +48,7 @@ class Paciente:
         return{
             "usuario": self.usuario,
             "clave_sesion": self.clave_sesion,
-            "clave_privada": self.clave_privada,
+            "clave_publica": self.clave_publica,
             "nombre": self.nombre,
             "nonce_nombre": self.nonce_nombre,
             "apellido1": self.apellido1,
@@ -109,11 +109,17 @@ def cifrar_paciente(paciente):
     atributos = ["nombre", "apellido1", "apellido2", "edad", "sexo", "ciudad", "calle",
                  "numero", "movil", "cuenta", "diagnostico"]
 
-    paciente_cifrado = {"usuario": paciente.usuario, "clave_privada": clave_privada.private_bytes(
+    paciente_cifrado = {"usuario": paciente.usuario}
+    info_cifrado = {"usuario": paciente.usuario,
+    "clave_privada": clave_privada.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption()
     ).hex()}
+
+    json_cifrado = Json.Json("storage/cifrado_info.json")
+    json_cifrado.load()
+    json_cifrado.add_item(info_cifrado)
 
     aesgcm, clave_sesion_cifrada, clave_sesion = Seguridad.generate_clave_sesion(clave_publica)
 
@@ -125,17 +131,20 @@ def cifrar_paciente(paciente):
         paciente_cifrado[f"nonce_{item}"] = nonce.hex()
 
     paciente_cifrado["clave_sesion"] = clave_sesion_cifrada.hex()
+    paciente_cifrado["clave_publica"] = clave_publica.hex()
 
     return paciente_cifrado
 
 #Función para descifrar datos de un paciente
 def descifrar_paciente(paciente):
     # Carga del json donde están las claves del cifrado
-    json_claves = Json.Json("storage/pacientes_expediente.json")
+    json_claves = Json.Json("storage/cifrado_info.json")
     json_claves.load()
+    json_paciente = Json.Json("storage/pacientes_expediente.json")
 
     paciente_dic = paciente.transf_a_dic()
     claves = json_claves.find_item(paciente_dic["usuario"], "usuario")
+    paciente = json_paciente.find_item(paciente_dic["usuario"], "usuario")
 
     if claves is None:
         print(f"Error: No se encontraron claves para el paciente con usuario {paciente_dic['usuario']}")
@@ -149,13 +158,13 @@ def descifrar_paciente(paciente):
                  "numero", "movil", "cuenta", "diagnostico"]
 
     # Descifrar la clave de sesión con la clave privada RSA
-    clave_sesion_cifrada = bytes.fromhex(claves["clave_sesion"])
+    clave_sesion_cifrada = bytes.fromhex(paciente["clave_sesion"])
     aesgcm = Seguridad.descifrar_clave_sesion(clave_sesion_cifrada, clave_privada)
 
     for item in atributos:
         # Recuperar los datos cifrados y el nonce
-        dato_cifrado = bytes.fromhex(claves[item])
-        nonce = bytes.fromhex(claves[f"nonce_{item}"])
+        dato_cifrado = bytes.fromhex(paciente[item])
+        nonce = bytes.fromhex(paciente[f"nonce_{item}"])
 
         # Descifrar el atributo utilizando la clave de sesión
         dato_descifrado = Seguridad.descifrar(aesgcm, nonce, dato_cifrado)
