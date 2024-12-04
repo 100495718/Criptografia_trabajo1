@@ -2,8 +2,6 @@ import re #Biblioteca para detectar expresiones regulares
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import os
 
@@ -43,51 +41,52 @@ def verificar_contrasena(contrasena, hash, salt):
 
 #Algoritmos para el cifrado, cifrado híbrido
 #Generar clave pública y privada
-def generate_rsa_keys():
+def generate_claves_rsa():
     clave_privada = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     clave_publica = clave_privada.public_key()
     return clave_privada, clave_publica
 
+def generate_clave_sesion(clave_publica):
+    # Generar clave sesión
+    clave_sesion = AESGCM.generate_key(bit_length=128)
+    aesgcm = AESGCM(clave_sesion)
+
+    # Cifrar la clave simétrica con RSA
+    clave_sesion_cifrada = clave_publica.encrypt(
+        clave_sesion,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+    return aesgcm, clave_sesion_cifrada, clave_sesion
 
 #Cifrado
-def cifrar(clave_publica, datos_a_cifrar):
-    # Generar clave simétrica
-    clave_simetrica = AESGCM.generate_key(bit_length=128)
-    aesgcm = AESGCM(clave_simetrica)
-
+def cifrar(aesgcm, datos_a_cifrar):
     # Generar un nonce para AES-GCM
     nonce = os.urandom(12)
 
     # Cifrar con AES-GCM
     datos_cifrados = aesgcm.encrypt(nonce, datos_a_cifrar, None)
 
-    # Cifrar la clave simétrica con RSA
-    clave_simetrica_cifrada = clave_publica.encrypt(
-        clave_simetrica,
+    return nonce, datos_cifrados
+
+def descifrar_clave_sesion(clave_sesion_cifrada, clave_privada):
+    # Descifrar clave simétrica con RSA
+    clave_sesion = clave_privada.decrypt(
+        clave_sesion_cifrada,
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
             label=None
         )
     )
-
-    return nonce, datos_cifrados, clave_simetrica_cifrada
-
+    aesgcm = AESGCM(clave_sesion)
+    return aesgcm
 
 #Descifrado
-def descifrar(clave_privada, nonce, dato_cifrado, clave_simetrica_cifrada):
-    # Descifrar clave simétrica con RSA
-    clave_simetrica = clave_privada.decrypt(
-        clave_simetrica_cifrada,
-        padding.OAEP(
-            mgf=padding.MGF1(algorithm=hashes.SHA256()),
-            algorithm=hashes.SHA256(),
-            label=None
-        )
-    )
-
+def descifrar(aesgcm, nonce, dato_cifrado):
     # Descifrar datos cifrados con AES-GCM
-    aesgcm = AESGCM(clave_simetrica)
     datos_descifrados = aesgcm.decrypt(nonce, dato_cifrado, None)
-
     return datos_descifrados

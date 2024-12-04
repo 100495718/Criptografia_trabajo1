@@ -1,13 +1,12 @@
 import Json
 import Seguridad
-import Clave
+from cryptography.hazmat.primitives import serialization
 
 #Clase para lo relacionado con los expedientes médicos
 class Paciente:
     def __init__(self,
-                 usuario: str,
+                 usuario:str,
                  nombre: str,
-                 clave_publica: str,
                  apellido1: str,
                  apellido2: str,
                  edad: int,
@@ -18,8 +17,9 @@ class Paciente:
                  movil: int,
                  cuenta: str,
                  diagnostico: str):
-        self.usuario = (nombre+apellido1+apellido2).lower()
-        self.clave_publica = clave_publica
+        self.usuario = usuario,
+        self.clave_privada = None,
+        self.clave_sesion = None,
         self.nombre = nombre
         self.nonce_nombre = None
         self.apellido1 = apellido1
@@ -47,7 +47,8 @@ class Paciente:
     def transf_a_dic(self):
         return{
             "usuario": self.usuario,
-            "clave_publica": self.clave_publica,
+            "clave_sesion": self.clave_sesion,
+            "clave_privada": self.clave_privada,
             "nombre": self.nombre,
             "nonce_nombre": self.nonce_nombre,
             "apellido1": self.apellido1,
@@ -74,7 +75,7 @@ class Paciente:
 
 #Función para transformar un diccionario con datos de un paciente en un objeto Paciente
 def trans_a_obj(dic):
-    return Paciente(dic["nombre"], dic["apellido1"], dic["apellido2"],dic["edad"], dic["sexo"],
+    return Paciente(dic["usuario"], dic["nombre"], dic["apellido1"], dic["apellido2"],dic["edad"], dic["sexo"],
                     dic["ciudad"], dic["calle"], dic["numero"], dic["movil"], dic["cuenta"], dic["diagnostico"])
 
 #Crear un paciente
@@ -101,138 +102,107 @@ def agregar():
 
 #Algoritmo para cifrar datos de un paciente
 def cifrar_paciente(paciente):
-    #Carga del json donde se guardarán las claves del cifrado
-    json = Json.Json("storage/cifrado_info.json")
-
-    #Si ya tenia claves las elimino, esto se usará en futuras funciones
-    if json.find_item(paciente.usuario, "usuario") != None:
-        json.delete_item(paciente.usuario, "usuario")
+    #Genero claves para el cifrado
+    clave_privada, clave_publica = Seguridad.generate_claves_rsa()
 
     #Cifro los datos
-    paciente.nombre, paciente.nonce_nombre = Seguridad.
-    paciente.apellido1, paciente.nonce_apellido1 = Seguridad.
-    paciente.apellido2, paciente.nonce_apellido2 = Seguridad.
-    paciente.edad, paciente.nonce_edad = Seguridad.
-    paciente.sexo, paciente.nonce_sexo = Seguridad.
-    paciente.ciudad, paciente.nonce_ciudad = Seguridad.
-    paciente.calle, paciente.nonce_calle = Seguridad.
-    paciente.numero, paciente.nonce_numero = Seguridad.
-    paciente.movil, paciente.nonce_movil = Seguridad.
-    paciente.cuenta, paciente.nonce_cuenta = Seguridad.
-    paciente.diagnostico, paciente.nonce_diagnostico = Seguridad.
-    return paciente
+    atributos = ["nombre", "apellido1", "apellido2", "edad", "sexo", "ciudad", "calle",
+                 "numero", "movil", "cuenta", "diagnostico"]
+
+    paciente_cifrado = {"usuario": paciente.usuario, "clave_privada": clave_privada.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption()
+    ).hex()}
+
+    aesgcm, clave_sesion_cifrada, clave_sesion = Seguridad.generate_clave_sesion(clave_publica)
+
+    for item in atributos:
+        dato = str(getattr(paciente, item)).encode("utf-8")
+        nonce, dato_cifrado = Seguridad.cifrar(aesgcm, dato)
+
+        paciente_cifrado[item] = dato_cifrado.hex()
+        paciente_cifrado[f"nonce_{item}"] = nonce.hex()
+
+    paciente_cifrado["clave_sesion"] = clave_sesion_cifrada.hex()
+
+    return paciente_cifrado
 
 #Función para descifrar datos de un paciente
 def descifrar_paciente(paciente):
     #Carga del json donde están las claves del cifrado
-    json_claves = Json.Json("storage/cifrado_info.json")
+    json_claves = Json.Json("storage/pacientes_expediente.json")
     json_claves.load()
 
-    #Localizar las claves del paciente
     claves = json_claves.find_item(paciente.usuario, "usuario")
-    key = bytes.fromhex(claves["key"])
-    nonce = bytes.fromhex(claves["nonce"])
+    clave_privada = serialization.load_pem_private_key(
+        bytes.fromhex(claves["clave_privada"]),
+        password=None
+    )
+    atributos = ["nombre", "apellido1", "apellido2", "edad", "sexo", "ciudad", "calle",
+                 "numero", "movil", "cuenta", "diagnostico"]
 
-    #Descifrar datos
-    paciente.nombre = Seguridad.
-    paciente.apellido1 = Seguridad.
-    paciente.apellido2 = Seguridad.
-    paciente.edad = Seguridad.
-    paciente.sexo = Seguridad.
-    paciente.ciudad = Seguridad.
-    paciente.calle = Seguridad.
-    paciente.numero = Seguridad.
-    paciente.movil = Seguridad.
-    paciente.cuenta = Seguridad.
+    # Descifrar la clave de sesión con la clave privada RSA
+    clave_sesion_cifrada = bytes.fromhex(claves["clave_sesion"])
+    aesgcm = Seguridad.descifrar_clave_sesion(clave_sesion_cifrada, clave_privada)
+
+    for item in atributos:
+        # Recuperar los datos cifrados y el nonce
+        dato_cifrado = bytes.fromhex(claves[item])
+        nonce = bytes.fromhex(claves[f"nonce_{item}"])
+
+        # Descifrar el atributo utilizando la clave de sesión
+        dato_descifrado = Seguridad.descifrar(aesgcm, nonce, dato_cifrado)
+
+        # Actualizar el atributo del paciente con el dato descifrado
+        setattr(paciente, item, dato_descifrado.decode("utf-8"))
     return paciente
 
 #Función para guardar un expediente en el json
 def guardar_paciente(paciente):
-    cifrar_paciente(paciente)
+    paciente_cifrado = cifrar_paciente(paciente)
     json = Json.Json("storage/pacientes_expediente.json")
-    data = paciente.transf_a_dic()
+    data = paciente_cifrado
     json.add_item(data)
     return
 
-#Mostrar lista de todos los pacientes
+#Mostrar lista de todos los pacientes con nombre y apellidos
 def mostrar():
-    #Carga del .json donde están los expedientes
     json_expedientes = Json.Json("storage/pacientes_expediente.json")
     json_expedientes.load()
 
-    #Carga del .json donde están las claves del cifrado
-    json_claves = Json.Json("storage/cifrado_info.json")
-    json_claves.load()
-    #Detectar si hay expedientes antes de hacer el bucle
     if not json_expedientes.data:
         print("No hay pacientes registrados.")
         return
+
+    indice = 1
     for item in json_expedientes.data:
-        usuario = item["usuario"]
-
-        #Localizar las claves para cada usuario
-        claves = json_claves.find_item(usuario, "usuario")
-        key = bytes.fromhex(claves["key"])
-        nonce = bytes.fromhex(claves["nonce"])
-
-        #Descifrar los datos
-        nombre = Seguridad.
-        apellido1 = Seguridad.
-        apellido2 = Seguridad.
-
-        #Transformar la información descifrada a texto normal
-        nombre_descifrado = nombre.decode('utf-8')
-        apellido1_descifrado = apellido1.decode('utf-8')
-        apellido2_descifrado = apellido2.decode('utf-8')
-
-        #Imprimir los datos por pantalla
-        print(f"Usuario: {usuario}\nNombre completo: {nombre_descifrado} {apellido1_descifrado} {apellido2_descifrado}\n")
+        paciente = descifrar_paciente(item)
+        print(f"{indice}-Nombre completo: {paciente.nombre} {paciente.apellido1} {paciente.apellido2}")
+        indice += 1
     return
 
-#Función para mostrar algunos datos de un único paciente
+#Función para mostrar algunos datos de un único paciente (nombre, apellidos, edad, sexo, movil y diagnostico)
 def mostrar_datos_paciente(usuario):
-    #Carga del json donde están los datos
+    # Carga del json donde están los datos cifrados del paciente
     json_expedientes = Json.Json("storage/pacientes_expediente.json")
     json_expedientes.load()
 
-    #Carga del json donde está la clave del cifrado
-    json_claves = Json.Json("storage/cifrado_info.json")
-    json_claves.load()
+    # Localizar expediente del paciente por su usuario
+    paciente_cifrado = json_expedientes.find_item(usuario, "usuario")
 
-    #Localizar expediente
-    paciente = json_expedientes.find_item(usuario, "usuario")
+    if not paciente_cifrado:
+        print(f"No se encontró un paciente con el usuario {usuario}")
+        return
 
-    #Localizar claves necesarias para descifrar
-    claves = json_claves.find_item(usuario, "usuario")
-    key = bytes.fromhex(claves["key"])
-    nonce = bytes.fromhex(claves["nonce"])
+    # Descifrar los datos del paciente
+    paciente = descifrar_paciente(paciente_cifrado)
 
-    #Descifrar los datos almacenados en hexadecimal en archivos .json
-    nombre = Seguridad.
-    apellido1 = Seguridad.
-    apellido2 = Seguridad.
-    edad = Seguridad.
-    sexo = Seguridad.
-    movil = Seguridad.
-    diagnostico = Seguridad.
-
-    #Transformar los datos descifrados a texto normal
-    nombre_descifrado = nombre.decode('utf-8')
-    apellido1_descifrado = apellido1.decode('utf-8')
-    apellido2_descifrado = apellido2.decode('utf-8')
-    edad_descifrado = edad.decode('utf-8')
-    sexo_descifrado = sexo.decode('utf-8')
-    movil_descifrado = movil.decode('utf-8')
-    diagnostico_descifrado = diagnostico.decode('utf-8')
-
-    #Imprimir por pantalla los datos
-    print(f"Nombre: {nombre_descifrado}")
-    print(f"Primer apellido: {apellido1_descifrado}")
-    print(f"Segundo apellido: {apellido2_descifrado}")
-    print(f"Edad: {edad_descifrado}")
-    print(f"Sexo: {sexo_descifrado}")
-    print(f"Movil: {movil_descifrado}")
-    print(f"Diagnostico: {diagnostico_descifrado}")
+    # Mostrar los datos descifrados
+    print(f"Nombre completo: {paciente.nombre} {paciente.apellido1} {paciente.apellido2}")
+    print(f"Edad: {paciente.edad}")
+    print(f"Sexo: {paciente.sexo}")
+    print(f"Diagnóstico: {paciente.diagnostico}")
     return
 
 #Función para que los médicos obtengan más información de un paciente
