@@ -114,6 +114,7 @@ def verificacion_firma(clave_privada, firma, data):
         hashes.SHA256()
     )
     return
+
 '''chosen_hash = hashes.SHA256()
 hasher = hashes.Hash(chosen_hash)
 hasher.update(b"data & ")
