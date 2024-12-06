@@ -1,5 +1,6 @@
 import Json
 import Seguridad
+import Firma
 from cryptography.hazmat.primitives import serialization
 
 #Clase para lo relacionado con los expedientes médicos
@@ -171,14 +172,27 @@ def descifrar_paciente(paciente):
 
         # Actualizar el atributo del paciente con el dato descifrado
         setattr(paciente, item, dato_descifrado.decode("utf-8"))
-    return paciente
+    return paciente, clave_privada
 
 #Función para guardar un expediente en el json
 def guardar_paciente(paciente):
-    paciente_cifrado = cifrar_paciente(paciente)
-    json = Json.Json("storage/pacientes_expediente.json")
-    data = paciente_cifrado
-    json.add_item(data)
+    #Cifrar paciente
+    paciente_cifrado, clave_privada = cifrar_paciente(paciente)
+
+    #Cargar json para almacenar datos de paciente y para almacenar firma
+    json_expediente= Json.Json("storage/pacientes_expediente.json")
+    json_firma = Json.Json("storage/pacientes_firma.json")
+
+    #Firmar datos del paciente
+    firma, paciente_hasehado = firmar_datos(paciente_cifrado, clave_privada)
+    firma_data = Firma.Firma(paciente["usuario"], firma)
+
+    #Verificar firma
+    verificar_firma(clave_privada, paciente_hasehado, firma_data.firma)
+
+    #Guardar firma y paciente
+    json_expediente.add_item(paciente_cifrado)
+    json_firma.add_item(firma_data.transf_a_dic())
     return
 
 #Mostrar lista de todos los pacientes con nombre y apellidos
@@ -226,6 +240,17 @@ def mostrar_datos_paciente(usuario):
 def buscar():
     usuario = input("Introduce el nombre de usuario del paciente: ")
     mostrar_datos_paciente(usuario)
+    return
+
+#Función para firmar los datos de un paciente
+def firmar_datos(paciente, clave_privada):
+    paciente_hasheado = Seguridad.derivar_contrasena()
+    firma = Seguridad.generar_firma(paciente_hasheado, clave_privada)
+    return firma, paciente_hasheado
+
+#Función para comprobar la firma de los datos de un paciente
+def verificar_firma(clave_privada, firma, paciente_hasheado):
+    Seguridad.verificacion_firma(clave_privada, firma, paciente_hasheado)
     return
 
 #______________________________________FUNCIONES EN DESARROLLO_________________________________________

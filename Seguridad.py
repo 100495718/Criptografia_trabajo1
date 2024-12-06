@@ -1,7 +1,7 @@
 import re #Biblioteca para detectar expresiones regulares
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import os
 
@@ -114,3 +114,17 @@ def verificacion_firma(clave_privada, firma, data):
         hashes.SHA256()
     )
     return
+'''chosen_hash = hashes.SHA256()
+hasher = hashes.Hash(chosen_hash)
+hasher.update(b"data & ")
+hasher.update(b"more data")
+digest = hasher.finalize()
+public_key.verify(
+    sig,
+    digest,
+    padding.PSS(
+        mgf=padding.MGF1(hashes.SHA256()),
+        salt_length=padding.PSS.MAX_LENGTH
+    ),
+    utils.Prehashed(chosen_hash)
+)'''
