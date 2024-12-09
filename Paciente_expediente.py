@@ -185,11 +185,12 @@ def guardar_paciente(paciente):
 
     #Firmar datos del paciente
     firma, paciente_hasehado = firmar_datos(paciente_cifrado, clave_privada)
+    print("datos firmados")
     firma_data = Firma.Firma(paciente["usuario"], firma)
 
     #Verificar firma
     verificar_firma(clave_privada, paciente_hasehado, firma_data.firma)
-
+    print("Firma verificada")
     #Guardar firma y paciente
     json_expediente.add_item(paciente_cifrado)
     json_firma.add_item(firma_data.transf_a_dic())
@@ -252,36 +253,3 @@ def firmar_datos(paciente, clave_privada):
 def verificar_firma(clave_privada, firma, paciente_hasheado):
     Seguridad.verificacion_firma(clave_privada, firma, paciente_hasheado)
     return
-
-#______________________________________FUNCIONES EN DESARROLLO_________________________________________
-
-"""
-#Modificar datos de un paciente
-def modificar():
-    #print("Modificar paciente")
-    json = Json.Json("storage/pacientes_expediente.json")
-    json.load()
-    json_claves = Json.Json("storage/cifrado_info.json")
-    json_claves.load()
-    usuario = input("Introduce el nombre de usuario que quieres modificar:")
-    paciente_dic = json.find_item(usuario, "usuario")
-    if paciente_dic == None:
-        print("Este paciente no existe")
-        input()
-        return
-    clave = input("Introduce el nombre de la clave del diccionario:")
-    if clave not in ["diagnostico", "nombre", "apellido1", "apellido2", "edad", "sexo"]:
-        print("Ese dato no se puede modificar o no existe")
-        input()
-        return
-    valor = input("Escribe el nuevo valor: \n")
-    paciente = trans_a_obj(paciente_dic)
-    paciente_cifrado = cifrar_paciente(paciente)
-    paciente_descifrado = descifrar_paciente(paciente_cifrado)
-    paciente_descifrado.transf_a_dic()[clave] = valor
-    json.delete_item(usuario, "usuario")
-    json_claves.delete_item(usuario, "usuario")
-    guardar_paciente(paciente_descifrado)
-    print("Pulse enter para volver al menú")
-    input()
-    return"""
