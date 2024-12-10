@@ -1,3 +1,4 @@
+import hashlib
 import re #Biblioteca para detectar expresiones regulares
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
@@ -115,17 +116,9 @@ def verificacion_firma(clave_privada, firma, data):
     )
     return
 
-'''chosen_hash = hashes.SHA256()
-hasher = hashes.Hash(chosen_hash)
-hasher.update(b"data & ")
-hasher.update(b"more data")
-digest = hasher.finalize()
-public_key.verify(
-    sig,
-    digest,
-    padding.PSS(
-        mgf=padding.MGF1(hashes.SHA256()),
-        salt_length=padding.PSS.MAX_LENGTH
-    ),
-    utils.Prehashed(chosen_hash)
-)'''
+def hashear_paciente(paciente):
+    tupla_paciente = tuple(sorted(paciente.items()))
+    print(tupla_paciente)
+    tupla_str = str(tupla_paciente).encode('utf-8')
+    paciente_hasheado = hashlib.sha256(tupla_str).digest()
+    return paciente_hasheado

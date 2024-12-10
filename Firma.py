@@ -6,5 +6,5 @@ class Firma():
     def transf_a_dic(self):
         return{
             "usuario": self.usuario,
-            "firma": self.firma
+            "firma": self.firma.hex()
         }

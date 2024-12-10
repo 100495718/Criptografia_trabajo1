@@ -132,9 +132,12 @@ def cifrar_paciente(paciente):
         paciente_cifrado[f"nonce_{item}"] = nonce.hex()
 
     paciente_cifrado["clave_sesion"] = clave_sesion_cifrada.hex()
-    paciente_cifrado["clave_publica"] = clave_publica.hex()
+    paciente_cifrado["clave_publica"] = clave_publica.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    ).hex()
 
-    return paciente_cifrado
+    return paciente_cifrado, clave_privada
 
 #Función para descifrar datos de un paciente
 def descifrar_paciente(paciente):
@@ -142,14 +145,16 @@ def descifrar_paciente(paciente):
     json_claves = Json.Json("storage/cifrado_info.json")
     json_claves.load()
     json_paciente = Json.Json("storage/pacientes_expediente.json")
+    json_paciente.load()
 
     paciente_dic = paciente.transf_a_dic()
-    claves = json_claves.find_item(paciente_dic["usuario"], "usuario")
-    paciente = json_paciente.find_item(paciente_dic["usuario"], "usuario")
+    usuario = paciente_dic["usuario"]
+    claves = json_claves.find_item(usuario, "usuario")
+    paciente_cifrado = json_paciente.find_item(usuario, "usuario")
 
     if claves is None:
-        print(f"Error: No se encontraron claves para el paciente con usuario {paciente_dic['usuario']}")
-        return None  # Or handle it appropriately
+        print(f"Error: No se encontraron claves para el paciente con usuario {usuario}")
+        return None
 
     clave_privada = serialization.load_pem_private_key(
         bytes.fromhex(claves["clave_privada"]),
@@ -159,20 +164,20 @@ def descifrar_paciente(paciente):
                  "numero", "movil", "cuenta", "diagnostico"]
 
     # Descifrar la clave de sesión con la clave privada RSA
-    clave_sesion_cifrada = bytes.fromhex(paciente["clave_sesion"])
+    clave_sesion_cifrada = bytes.fromhex(paciente_cifrado["clave_sesion"])
     aesgcm = Seguridad.descifrar_clave_sesion(clave_sesion_cifrada, clave_privada)
 
     for item in atributos:
         # Recuperar los datos cifrados y el nonce
-        dato_cifrado = bytes.fromhex(paciente[item])
-        nonce = bytes.fromhex(paciente[f"nonce_{item}"])
+        dato_cifrado = bytes.fromhex(paciente_cifrado[item])
+        nonce = bytes.fromhex(paciente_cifrado[f"nonce_{item}"])
 
         # Descifrar el atributo utilizando la clave de sesión
         dato_descifrado = Seguridad.descifrar(aesgcm, nonce, dato_cifrado)
 
         # Actualizar el atributo del paciente con el dato descifrado
         setattr(paciente, item, dato_descifrado.decode("utf-8"))
-    return paciente, clave_privada
+    return paciente
 
 #Función para guardar un expediente en el json
 def guardar_paciente(paciente):
@@ -186,10 +191,11 @@ def guardar_paciente(paciente):
     #Firmar datos del paciente
     firma, paciente_hasehado = firmar_datos(paciente_cifrado, clave_privada)
     print("datos firmados")
-    firma_data = Firma.Firma(paciente["usuario"], firma)
+    print(paciente_hasehado)
+    firma_data = Firma.Firma(paciente.usuario, firma)
 
     #Verificar firma
-    verificar_firma(clave_privada, paciente_hasehado, firma_data.firma)
+    verificar_firma(clave_privada, bytes.fromhex(firma_data.firma.hex()), paciente_hasehado)
     print("Firma verificada")
     #Guardar firma y paciente
     json_expediente.add_item(paciente_cifrado)
@@ -245,7 +251,7 @@ def buscar():
 
 #Función para firmar los datos de un paciente
 def firmar_datos(paciente, clave_privada):
-    paciente_hasheado = Seguridad.derivar_contrasena()
+    paciente_hasheado = Seguridad.hashear_paciente(paciente)
     firma = Seguridad.generar_firma(paciente_hasheado, clave_privada)
     return firma, paciente_hasheado
 
