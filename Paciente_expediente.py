@@ -118,7 +118,7 @@ def cifrar_paciente(paciente):
         encryption_algorithm=serialization.NoEncryption()
     ).hex()}
 
-    json_cifrado = Json.Json("storage/cifrado_info.json")
+    json_cifrado = Json.Json("storage/claves_priv_pacientes.json")
     json_cifrado.load()
     json_cifrado.add_item(info_cifrado)
 
@@ -142,7 +142,7 @@ def cifrar_paciente(paciente):
 #Función para descifrar datos de un paciente
 def descifrar_paciente(paciente):
     # Carga del json donde están las claves del cifrado
-    json_claves = Json.Json("storage/cifrado_info.json")
+    json_claves = Json.Json("storage/claves_priv_pacientes.json")
     json_claves.load()
     json_paciente = Json.Json("storage/pacientes_expediente.json")
     json_paciente.load()
