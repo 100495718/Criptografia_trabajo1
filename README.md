@@ -9,3 +9,7 @@ Hay que asegurarse antes de usarlo, sobretodo si se han modificado manualmente
 los archivos .json, que contienen un [ al principio y otro ] al final.
 
 El archivo clave.txt no puede modificarse.
+
+
+ClaveSecreta1234@ <- contraseña AC1
+ClaveSecreta1234@5678 <- contraseña AC2
