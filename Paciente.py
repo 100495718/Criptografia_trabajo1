@@ -9,7 +9,6 @@ class Paciente_usuario():
         self.usuario = usuario
         self.hash = hash.hex()
         self.salt = salt.hex()
-        self.clave_privada = clave_privada
 
     def transf_a_dic(self):
         return{
