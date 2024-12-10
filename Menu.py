@@ -55,10 +55,9 @@ def menu_medico():
         print("______________CLÍNICA______________")
         print("__________AREA DE MÉDICO___________\n")
         print("1- Crear paciente")
-        print("2- Modificar datos de un paciente")
-        print("3- Mostrar todos los pacientes")
-        print("4- Buscar paciente")
-        print("5- Salir\n")
+        print("2- Mostrar todos los pacientes")
+        print("3- Buscar paciente")
+        print("4- Salir\n")
 
         opcion = input("Selecciona una opción")
         print()
@@ -70,20 +69,15 @@ def menu_medico():
                 print("\nPulse enter, para volver al menú")
                 input()
             case "2":
-                #modificar dato de paciente
-                #Paciente_expediente.modificar()
-                print("Función en desarrollo")
-                time.sleep(1)
-            case "3":
                 #mostrar lista de pacientes
                 Paciente_expediente.mostrar()
                 print("\nPulse enter, para volver al menú")
                 input()
-            case "4":
+            case "3":
                 Paciente_expediente.buscar()
                 print("\nPulse enter, para volver al menú")
                 input()
-            case "5":
+            case "4":
                 print("Volviendo al menú principal... \n")
                 time.sleep(1)
                 break
@@ -97,8 +91,7 @@ def menu_paciente(usuario):
         print("_______________CLÍNICA_______________")
         print("__________AREA DE PACIENTE___________\n")
         print("1- Ver mis datos")
-        print("2- Modificar mis datos")
-        print("3- Salir\n")
+        print("2- Salir\n")
 
         opcion = input("Selecciona una opción")
         print()
@@ -110,11 +103,6 @@ def menu_paciente(usuario):
                 print("\nPulse enter, para volver al menú")
                 input()
             case "2":
-                #modificar datos del paciente actual
-                print("Función en desarrollo")
-                print("\nPulse enter para volver al menu")
-                input()
-            case "3":
                 print("Volviendo al menú principal... \n")
                 time.sleep(1)
                 break

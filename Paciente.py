@@ -5,7 +5,7 @@ import Seguridad
 #Clase para llevar a cabo el inicio de sesión y registro de pacientes y mantener los datos de las cuentas separados
 #del expediente médico
 class Paciente_usuario():
-    def __init__(self, usuario: str, hash, salt, clave_privada):
+    def __init__(self, usuario: str, hash, salt):
         self.usuario = usuario
         self.hash = hash.hex()
         self.salt = salt.hex()
@@ -15,7 +15,6 @@ class Paciente_usuario():
             "usuario": self.usuario,
             "hash": self.hash,
             "salt": self.salt,
-            "clave_privada": self.clave_privada
         }
 
 def registrar_p():

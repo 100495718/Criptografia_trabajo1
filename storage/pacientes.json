@@ -1,2 +1,7 @@
 [
+  {
+    "usuario": "jose",
+    "hash": "27c48082b3037790b88c82034c6b73ed",
+    "salt": "56245e098b9e46d048a84650cb7f09d731f64c80f5a3275ab0959310be57cf4b"
+  }
 ]
