@@ -2,6 +2,8 @@ import Json
 import Seguridad
 import Firma
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.backends import default_backend
 
 #Clase para lo relacionado con los expedientes médicos
 class Paciente:
@@ -181,6 +183,7 @@ def descifrar_paciente(paciente):
     aesgcm = Seguridad.descifrar_clave_sesion(clave_sesion_cifrada, clave_privada)
 
     for item in atributos:
+
         # Recuperar los datos cifrados y el nonce
         dato_cifrado = bytes.fromhex(paciente_cifrado[item])
         nonce = bytes.fromhex(paciente_cifrado[f"nonce_{item}"])
@@ -228,6 +231,9 @@ def mostrar():
     for item in json_expedientes.data:
         paciente = trans_a_obj(item)
         paciente = descifrar_paciente(paciente)
+        if paciente is None:
+            print(f"Error: No se pudo descifrar el paciente con usuario {item['usuario']}")
+            return
         print(f"{indice}-Nombre completo: {paciente.nombre} {paciente.apellido1} {paciente.apellido2}")
         indice += 1
     return
