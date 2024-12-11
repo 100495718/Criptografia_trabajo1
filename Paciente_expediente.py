@@ -114,7 +114,7 @@ def cifrar_paciente(paciente):
                  "numero", "movil", "cuenta", "diagnostico"]
 
     paciente_cifrado = {"usuario": paciente.usuario}
-    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador").encode("utf-8")
+    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador: \n").encode("utf-8")
     clave_privada_cifrada = clave_privada.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
@@ -163,16 +163,16 @@ def descifrar_paciente(paciente):
     if claves is None:
         print(f"Error: No se encontraron claves para el paciente con usuario {usuario}")
         return None
-    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador").encode("utf-8")
+    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador:\n").encode("utf-8")
     try:
         clave_privada = load_pem_private_key(
             bytes.fromhex(claves["clave_privada"]),
             password=contrasena_admin,
             backend=default_backend()
         )
-        print(f"Clave privada desencriptada correctamente para el usuario {usuario}")
+        print(f"Clave privada desencriptada correctamente para el usuario {usuario}\n")
     except Exception as e:
-        print(f"Error al desencriptar la clave privada: {e}")
+        print(f"Error al desencriptar la clave privada")
         return
 
 
@@ -207,13 +207,13 @@ def guardar_paciente(paciente):
 
     #Firmar datos del paciente
     firma, paciente_hasehado = firmar_datos(paciente_cifrado, clave_privada)
-    print("datos firmados")
-    print(paciente_hasehado)
+    print("Firmando datos\n")
+    #print(paciente_hasehado)
     firma_data = Firma.Firma(paciente.usuario, firma)
 
     #Verificar firma
     verificar_firma(clave_privada, bytes.fromhex(firma_data.firma.hex()), paciente_hasehado)
-    print("Firma verificada")
+    print("Firma verificada\n")
     #Guardar firma y paciente
     json_expediente.add_item(paciente_cifrado)
     json_firma.add_item(firma_data.transf_a_dic())
