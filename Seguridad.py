@@ -103,8 +103,10 @@ def generar_firma(data, clave_privada):
     )
     return firma
 
-def verificacion_firma(clave_privada, firma, data):
-    clave_publica = clave_privada.public_key()
+def verificacion_firma(clave_privada, firma, data, usuario):
+    """path = f".\{usuario}\{usuario}cert.pem"
+    with open(path, "rb") as cert_file:
+        clave_publica = serialization.load_pem_public_key(cert_file.read(), backend=default_backend())"""
     clave_publica.verify(
         firma,
         data,

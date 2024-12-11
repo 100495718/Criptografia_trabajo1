@@ -1,6 +1,7 @@
 import Json
 import Seguridad
 import Firma
+import Certificado
 from cryptography.hazmat.primitives import serialization
 
 #Clase para lo relacionado con los expedientes médicos
@@ -117,8 +118,9 @@ def cifrar_paciente(paciente):
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption()
     ).hex()}
-
-    json_cifrado = Json.Json("storage/claves_priv_pacientes.json")
+    print("Generar certificado")
+    Certificado.generar_certificado(clave_privada, paciente.usuario)
+    json_cifrado = Json.Json("storage/claves_priv.json")
     json_cifrado.load()
     json_cifrado.add_item(info_cifrado)
 
@@ -142,7 +144,7 @@ def cifrar_paciente(paciente):
 #Función para descifrar datos de un paciente
 def descifrar_paciente(paciente):
     # Carga del json donde están las claves del cifrado
-    json_claves = Json.Json("storage/claves_priv_pacientes.json")
+    json_claves = Json.Json("storage/claves_priv.json")
     json_claves.load()
     json_paciente = Json.Json("storage/pacientes_expediente.json")
     json_paciente.load()
@@ -160,6 +162,7 @@ def descifrar_paciente(paciente):
         bytes.fromhex(claves["clave_privada"]),
         password=None
     )
+
     atributos = ["nombre", "apellido1", "apellido2", "edad", "sexo", "ciudad", "calle",
                  "numero", "movil", "cuenta", "diagnostico"]
 
