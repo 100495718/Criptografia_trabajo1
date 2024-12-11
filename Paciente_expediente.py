@@ -114,7 +114,7 @@ def cifrar_paciente(paciente):
                  "numero", "movil", "cuenta", "diagnostico"]
 
     paciente_cifrado = {"usuario": paciente.usuario}
-    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador: \n").encode("utf-8")
+    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador:").encode("utf-8")
     clave_privada_cifrada = clave_privada.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
@@ -123,7 +123,7 @@ def cifrar_paciente(paciente):
     info_cifrado = {"usuario": paciente.usuario,
     "clave_privada": clave_privada_cifrada}
 
-    """print("Generar certificado")
+    """print("Generando certificado")
     Certificado.generar_certificado(clave_privada, paciente.usuario)"""
 
     json_cifrado = Json.Json("storage/claves_priv.json")
@@ -163,7 +163,8 @@ def descifrar_paciente(paciente):
     if claves is None:
         print(f"Error: No se encontraron claves para el paciente con usuario {usuario}")
         return None
-    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador:\n").encode("utf-8")
+
+    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador:").encode("utf-8")
     try:
         clave_privada = load_pem_private_key(
             bytes.fromhex(claves["clave_privada"]),
@@ -175,7 +176,6 @@ def descifrar_paciente(paciente):
         print(f"Error al desencriptar la clave privada")
         return
 
-
     atributos = ["nombre", "apellido1", "apellido2", "edad", "sexo", "ciudad", "calle",
                  "numero", "movil", "cuenta", "diagnostico"]
 
@@ -184,7 +184,6 @@ def descifrar_paciente(paciente):
     aesgcm = Seguridad.descifrar_clave_sesion(clave_sesion_cifrada, clave_privada)
 
     for item in atributos:
-
         # Recuperar los datos cifrados y el nonce
         dato_cifrado = bytes.fromhex(paciente_cifrado[item])
         nonce = bytes.fromhex(paciente_cifrado[f"nonce_{item}"])
