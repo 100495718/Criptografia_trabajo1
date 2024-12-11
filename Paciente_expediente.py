@@ -1,6 +1,7 @@
 import Json
 import Seguridad
 import Firma
+import getpass
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.hazmat.backends import default_backend
@@ -113,7 +114,7 @@ def cifrar_paciente(paciente):
                  "numero", "movil", "cuenta", "diagnostico"]
 
     paciente_cifrado = {"usuario": paciente.usuario}
-    contrasena_admin = input("Introduce la contraseña de administrador").encode("utf-8")
+    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador").encode("utf-8")
     clave_privada_cifrada = clave_privada.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
@@ -162,7 +163,7 @@ def descifrar_paciente(paciente):
     if claves is None:
         print(f"Error: No se encontraron claves para el paciente con usuario {usuario}")
         return None
-    contrasena_admin = input("Introduce la contraseña de administrador").encode("utf-8")
+    contrasena_admin = getpass.getpass("Introduce la contraseña de administrador").encode("utf-8")
     try:
         clave_privada = load_pem_private_key(
             bytes.fromhex(claves["clave_privada"]),
