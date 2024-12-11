@@ -130,7 +130,7 @@ def verificacion_firma(clave_privada, firma, data):
 
 def hashear_paciente(paciente):
     tupla_paciente = tuple(sorted(paciente.items()))
-    print(tupla_paciente)
+    #print(tupla_paciente)
     tupla_str = str(tupla_paciente).encode('utf-8')
     paciente_hasheado = hashlib.sha256(tupla_str).digest()
     return paciente_hasheado
