@@ -1,7 +1,6 @@
 import Json
 import Seguridad
 import Firma
-import Certificado
 from cryptography.hazmat.primitives import serialization
 
 #Clase para lo relacionado con los expedientes médicos
@@ -112,14 +111,18 @@ def cifrar_paciente(paciente):
                  "numero", "movil", "cuenta", "diagnostico"]
 
     paciente_cifrado = {"usuario": paciente.usuario}
-    info_cifrado = {"usuario": paciente.usuario,
-    "clave_privada": clave_privada.private_bytes(
+    contrasena_admin = input("Introduce la contraseña de administrador").encode("utf-8")
+    clave_privada_cifrada = clave_privada.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption()
-    ).hex()}
-    print("Generar certificado")
-    Certificado.generar_certificado(clave_privada, paciente.usuario)
+        encryption_algorithm=serialization.BestAvailableEncryption(contrasena_admin)
+    ).hex()
+    info_cifrado = {"usuario": paciente.usuario,
+    "clave_privada": clave_privada_cifrada}
+
+    """print("Generar certificado")
+    Certificado.generar_certificado(clave_privada, paciente.usuario)"""
+
     json_cifrado = Json.Json("storage/claves_priv.json")
     json_cifrado.load()
     json_cifrado.add_item(info_cifrado)
@@ -157,11 +160,18 @@ def descifrar_paciente(paciente):
     if claves is None:
         print(f"Error: No se encontraron claves para el paciente con usuario {usuario}")
         return None
+    contrasena_admin = input("Introduce la contraseña de administrador").encode("utf-8")
+    try:
+        clave_privada = load_pem_private_key(
+            bytes.fromhex(claves["clave_privada"]),
+            password=contrasena_admin,
+            backend=default_backend()
+        )
+        print(f"Clave privada desencriptada correctamente para el usuario {usuario}")
+    except Exception as e:
+        print(f"Error al desencriptar la clave privada: {e}")
+        return
 
-    clave_privada = serialization.load_pem_private_key(
-        bytes.fromhex(claves["clave_privada"]),
-        password=None
-    )
 
     atributos = ["nombre", "apellido1", "apellido2", "edad", "sexo", "ciudad", "calle",
                  "numero", "movil", "cuenta", "diagnostico"]
