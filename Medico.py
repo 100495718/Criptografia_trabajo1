@@ -18,9 +18,12 @@ class Medico():
         }
 
 def registrar_m():
-    usuario = input("Introduce un nombre de usuario:")
     json = Json.Json("storage/medicos.json")
     json.load()
+    usuario = input("Introduce un nombre de usuario:")
+    while json.find_item(usuario, "usuario") is not None:
+        print("Ese usuario ya existe")
+        usuario = input("Introduce un nombre de usuario:")
     if json.data == []: # Si no hay usuarios registrados
         contrasena = getpass.getpass("Introduce una contraseña: ")
         if Seguridad.contrasena_robusta(contrasena): #Verifico que la contraseña sea robusta

@@ -3,5 +3,10 @@
     "usuario": "Alicia",
     "hash": "c101e9025bda83970c224267e969b0d2",
     "salt": "bb7bc7d5714b74f97d5b848e1b7352bc4b10eb7266b78872aeb4feefe27a25d5"
+  },
+  {
+    "usuario": "Daniel",
+    "hash": "2c38b4638578e22257b8233d989a58e7",
+    "salt": "3bd9721d6d04563cf7970aa06db6647e6e44da7bce20efde5e413f687507633d"
   }
 ]

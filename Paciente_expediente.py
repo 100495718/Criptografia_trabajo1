@@ -84,22 +84,75 @@ def trans_a_obj(dic):
 
 #Crear un paciente
 def agregar():
-    #print("Agregar paciente")
-    usuario = input("Nombre de usuario para el paciente: ")
-    nombre = input("Nombre del paciente: ")
-    apellido1 = input("Primer apellido del paciente: ")
-    apellido2 = input("Segundo apellido del paciente: ")
-    edad = input("Edad del paciente: ")
-    sexo = input("Sexo del paciente: ")
-    ciudad = input("Ciudad donde reside el paciente: ")
-    calle = input("Calle donde reside el paciente: ")
-    numero = input("Número de portal del paciente: ")
-    movil = input("Número de teléfono del paciente: ")
-    cuenta = input("Número de cuenta bancaria del paciente: ")
-    diagnostico = input("Diagnóstico del paciente: ")
+    json_expedientes = Json.Json("storage/pacientes_expediente.json")
+    json_expedientes.load()
+    # Solicitar datos del paciente con validaciones
+    usuario = input("Nombre de usuario para el paciente: ").strip()
+    while not usuario or json_expedientes.find_item(usuario, "usuario") is not None:
+        if not usuario:
+            print("El nombre de usuario no puede estar vacío.")
+        else:
+            print("Ese nombre de usuario ya existe.")
+        usuario = input("Nombre de usuario para el paciente: ").strip()
 
-    nuevo_paciente = Paciente(usuario, nombre, apellido1, apellido2, edad, sexo, ciudad,
-                              calle, numero, movil, cuenta, diagnostico)
+    nombre = input("Nombre del paciente: ").strip()
+    while not nombre.isalpha():
+        print("El nombre debe contener solo letras.")
+        nombre = input("Nombre del paciente: ").strip()
+
+    apellido1 = input("Primer apellido del paciente: ").strip()
+    while not apellido1.isalpha():
+        print("El primer apellido debe contener solo letras.")
+        apellido1 = input("Primer apellido del paciente: ").strip()
+
+    apellido2 = input("Segundo apellido del paciente: ").strip()
+    while not apellido2.isalpha():
+        print("El segundo apellido debe contener solo letras.")
+        apellido2 = input("Segundo apellido del paciente: ").strip()
+
+    edad = input("Edad del paciente: ").strip()
+    while not edad.isdigit() or not (0 < int(edad) < 120):
+        print("La edad debe ser un número válido entre 1 y 120.")
+        edad = input("Edad del paciente: ").strip()
+
+    sexo = input("Sexo del paciente (M/F/O): ").strip().upper()
+    while sexo not in ["M", "F", "O"]:
+        print("Sexo inválido. Introduzca M (Masculino), F (Femenino) o O (Otro).")
+        sexo = input("Sexo del paciente (M/F/O): ").strip().upper()
+
+    ciudad = input("Ciudad donde reside el paciente: ").strip()
+    while not ciudad.isalpha():
+        print("La ciudad debe contener solo letras.")
+        ciudad = input("Ciudad donde reside el paciente: ").strip()
+
+    calle = input("Calle donde reside el paciente: ").strip()
+    while not calle:
+        print("La calle no puede estar vacía.")
+        calle = input("Calle donde reside el paciente: ").strip()
+
+    numero = input("Número de portal del paciente: ").strip()
+    while not numero.isdigit():
+        print("El número del portal debe ser un valor numérico.")
+        numero = input("Número de portal del paciente: ").strip()
+
+    movil = input("Número de teléfono del paciente (9 dígitos): ").strip()
+    while not movil.isdigit() or len(movil) != 9:
+        print("El número de teléfono debe contener exactamente 9 dígitos.")
+        movil = input("Número de teléfono del paciente (9 dígitos): ").strip()
+
+    cuenta = input("Número de cuenta bancaria del paciente: ").strip()
+    while not cuenta.isdigit() or len(cuenta) < 10:
+        print("El número de cuenta bancaria debe contener al menos 10 dígitos.")
+        cuenta = input("Número de cuenta bancaria del paciente: ").strip()
+
+    diagnostico = input("Diagnóstico del paciente: ").strip()
+    while not diagnostico:
+        print("El diagnóstico no puede estar vacío.")
+        diagnostico = input("Diagnóstico del paciente: ").strip()
+
+    # Crear el nuevo paciente
+    nuevo_paciente = Paciente(usuario, nombre, apellido1, apellido2, int(edad), sexo, ciudad,
+                              calle, int(numero), int(movil), cuenta, diagnostico)
     guardar_paciente(nuevo_paciente)
     print("\nEl paciente se ha creado correctamente\n")
     return
@@ -234,7 +287,7 @@ def mostrar():
         if paciente is None:
             print(f"Error: No se pudo descifrar el paciente con usuario {item['usuario']}")
             return
-        print(f"{indice}-Nombre completo: {paciente.nombre} {paciente.apellido1} {paciente.apellido2}")
+        print(f"{indice}-Nombre completo: {paciente.nombre} {paciente.apellido1} {paciente.apellido2}\n")
         indice += 1
     return
 
